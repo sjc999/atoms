@@ -251,10 +251,11 @@
     <button class="tabbtn active" data-tab="levels" role="tab" aria-selected="true">§2 Energy levels</button>
     <button class="tabbtn" data-tab="energy" role="tab" aria-selected="false">§3 Total energy</button>
     <button class="tabbtn" data-tab="wave" role="tab" aria-selected="false">§4 Wavefunctions</button>
-    <button class="tabbtn" data-tab="ie" role="tab" aria-selected="false">§5 Ionisation</button>
-    <button class="tabbtn" data-tab="si" role="tab" aria-selected="false">§6 Self-interaction</button>
-    <button class="tabbtn" data-tab="3d" role="tab" aria-selected="false">§7 3D shape</button>
-    <button class="tabbtn" data-tab="conv" role="tab" aria-selected="false">§8 Basis convergence</button>
+    <button class="tabbtn" data-tab="pot" role="tab" aria-selected="false">§5 Potential V(r)</button>
+    <button class="tabbtn" data-tab="ie" role="tab" aria-selected="false">§6 Ionisation</button>
+    <button class="tabbtn" data-tab="si" role="tab" aria-selected="false">§7 Self-interaction</button>
+    <button class="tabbtn" data-tab="3d" role="tab" aria-selected="false">§8 3D shape</button>
+    <button class="tabbtn" data-tab="conv" role="tab" aria-selected="false">§9 Basis convergence</button>
     <button class="tabbtn" data-tab="notes" role="tab" aria-selected="false">Notes</button>
   </nav>
 
@@ -300,20 +301,45 @@
     </div>
   </section>
 
+  <section id="sec-pot" class="tabpanel" data-tab="pot">
+    <div class="rule-head"><span class="num">§5</span><h2>Local potential V(r) and its components</h2></div>
+    <div class="plotcard">
+      <div class="toolbar">
+        <label>Configurations</label>
+        <span id="potCfgList" style="display:flex; flex-wrap:wrap; gap:.35rem .9rem; align-items:center;"></span>
+        <span id="potPickBtns" style="display:flex; gap:.4rem;"></span>
+        <label for="potQuant">Quantity</label>
+        <select id="potQuant">
+          <option value="v">potential, V(r)</option>
+          <option value="rv">r·V(r)  (shows the long-range tail)</option>
+        </select>
+        <label>X-axis</label>
+        <span class="segbtn-group" id="potScaleGroup"></span>
+        <label for="potYRange">Y-range</label>
+        <select id="potYRange">
+          <option value="valence">valence region (the −Z/r core runs off the plot)</option>
+          <option value="full">full range</option>
+        </select>
+      </div>
+      <div class="toolbar" id="potShowBar" style="gap:.9rem; flex-wrap:wrap;"></div>
+      <div id="potHost"></div>
+    </div>
+  </section>
+
   <section id="sec-ie" class="tabpanel" data-tab="ie">
-    <div class="rule-head"><span class="num">§5</span><h2>Ionisation energy (Koopmans' theorem)</h2></div>
+    <div class="rule-head"><span class="num">§6</span><h2>Ionisation energy (Koopmans' theorem)</h2></div>
     <p class="subtitle tight">Koopmans' theorem is strictly a Hartree–Fock result: −ε<sub>HOMO</sub> approximates the ionisation energy — the energy to remove the outermost electron of whatever species is currently selected — because removing an electron leaves the remaining orbitals unrelaxed. It is not formally justified for Hartree or the DFT functionals, but the same −ε<sub>HOMO</sub> estimate is shown for every configuration below to make the effect of self-interaction error on the orbital energy itself visible — a negative value means that method predicts the outermost electron is not bound at all. The experimental reference row only appears for a neutral atom (§1's charge set to 0): for an ion it would need a different, further ionisation energy (2nd, 3rd, …) that isn't tabulated here.</p>
     <div id="ieHost"></div>
   </section>
 
   <section id="sec-si" class="tabpanel" data-tab="si">
-    <div class="rule-head"><span class="num">§6</span><h2>Self-interaction, orbital by orbital</h2></div>
+    <div class="rule-head"><span class="num">§7</span><h2>Self-interaction, orbital by orbital</h2></div>
     <p class="subtitle tight">For the outermost (HOMO) orbital, this is its Hartree self-Coulomb energy J<sub>self</sub> — the spurious repulsion an electron would feel from its own charge cloud — alongside how much of it each method's exchange treatment cancels. For Hartree–Fock this is an exact identity (the same-spin exchange integral of an orbital with itself equals its own direct integral, so the cancellation is exactly J<sub>self</sub>). For the DFT functionals (LDA, PBE, rSCAN) it is only an approximate, orbital-projected diagnostic, since their potential depends on the total density rather than a single orbital — the numbers can occasionally show slight over- or under-cancellation (even a small negative residual), unlike Hartree–Fock's exact identity.</p>
     <div id="siHost"></div>
   </section>
 
   <section id="sec-3d" class="tabpanel" data-tab="3d">
-    <div class="rule-head"><span class="num">§7</span><h2>Orbital shape in 3D</h2></div>
+    <div class="rule-head"><span class="num">§8</span><h2>Orbital shape in 3D</h2></div>
     <p class="subtitle tight">A three-dimensional view of R<sub>nl</sub>(r) combined with a real spherical harmonic, rendered as a cloud of points sampled in proportion to the actual probability density |ψ|² — the same way the radial plots are built, just in 3D instead of integrated over angle. Colour marks the sign of ψ (important for seeing where an orbital changes phase — at an angular node for p/d/f shapes, or at a radial node for any excited shell). The threshold slider is a density cutoff: raise it and only the densest, most probable core of the cloud remains, giving an isosurface-like shrinking boundary without needing to extract an explicit surface mesh. "Total electron density" (first entry in the orbital dropdown) sums every occupied shell instead of showing one at a time — perfectly spherically symmetric by construction, so no phase to colour and no shape to choose, but a direct view of the atom's overall size and concentric shell structure. Drag to rotate, scroll to zoom.</p>
     <div class="plotcard">
       <div class="toolbar">
@@ -338,7 +364,7 @@
   </section>
 
   <section id="sec-conv" class="tabpanel" data-tab="conv">
-    <div class="rule-head"><span class="num">§8</span><h2>Basis set convergence</h2></div>
+    <div class="rule-head"><span class="num">§9</span><h2>Basis set convergence</h2></div>
     <p class="subtitle tight">What "basis set quality" actually buys you, for the current element and charge (§1): total energy under minimal (Slater's historical rule), double-zeta+ (double-zeta plus one spare diffuse function) with its fixed exponent spread, the same with that spread variationally optimised for this atom (done as part of this section's own sweep), and even-tempered — climbing, to greater or lesser degree, toward the near-exact numerical result shown as a reference line. Worth watching for: the optimised double-zeta basis, with half as many functions as even-tempered, can still come out ahead of it — exponent quality matters as much as basis size, sometimes more. Hartree-Fock is the clean case, since it minimises the quantity plotted here and the bars should improve steadily toward the reference; for Hartree and the DFT functionals, don't be surprised if a <i>larger</i> basis sometimes reports a <i>worse</i> (less negative) bar than a smaller one — those methods don't minimise the quantity plotted here (see the Notes), so enlarging the basis only reliably helps the quantity each method genuinely does minimise, not necessarily this one. This runs several full self-consistent fields from scratch (one of them, the optimised double-zeta case, is itself a repeated-SCF search), so it's opt-in rather than automatic — the time depends strongly on the element and method (the status line gives an estimate; a numerical Hartree-Fock reference for a heavy atom can take many minutes).</p>
     <div class="plotcard">
       <div class="toolbar">
@@ -2270,7 +2296,8 @@ function pbeHCorrection(epsUnif, phi, t){
 // grid) and, via numerical differentiation of exactly this function, for the potential -- kept as
 // one function rather than duplicated copies so a fix (like the H regularization above) can't
 // accidentally land in only one of two places.
-function pbeExcDensityAt(nUp, nDown, gUp, gDown){
+// part: 'xc' (default, everything the SCF uses), 'x' (exchange only) or 'c' (correlation only): used to show the potential's components separately.
+function pbeExcDensityAt(nUp, nDown, gUp, gDown, part='xc'){
   let ex = 0;
   for (const [nS, gS] of [[nUp,gUp],[nDown,gDown]]){
     if (nS<=1e-300) continue;
@@ -2280,8 +2307,9 @@ function pbeExcDensityAt(nUp, nDown, gUp, gDown){
     const Fx = 1 + PBE_KAPPA - PBE_KAPPA/(1+PBE_MU*s*s/PBE_KAPPA);
     ex += 0.5*(-PBE_CX_DIRAC*Math.pow(n2,1/3))*Fx*n2;
   }
+  if (part==='x'){ return ex; }
   const n = nUp+nDown;
-  if (n<=1e-300) return ex;
+  if (n<=1e-300) return part==='c' ? 0 : ex;
   const zeta = Math.max(-1,Math.min(1,(nUp-nDown)/n));
   const rs = Math.pow(3/(4*Math.PI*n), 1/3);
   const epsUnif = pw92EpsC(rs, zeta);
@@ -2291,7 +2319,7 @@ function pbeExcDensityAt(nUp, nDown, gUp, gDown){
   const gradN = gUp+gDown;
   const t = Math.abs(gradN)/(2*phi*ks*n);
   const H = pbeHCorrection(epsUnif, phi, t);
-  return ex + (epsUnif+H)*n;
+  return (part==='c' ? 0 : ex) + (epsUnif+H)*n;
 }
 // PBE's correlation-only energy density (no exchange), for the "correlation energy by functional"
 // comparison table (§3), which needs this to stand alongside Wigner/VWN/PW92's correlation-only
@@ -2345,20 +2373,20 @@ const PBE_DENSITY_FLOOR = 1e-12;
 // density by a smooth bump and comparing the resulting energy change to this potential integrated
 // against that same bump) to exact numerical agreement everywhere a real atom's density is non-
 // negligible, before trusting it here.
-function pbeExcPotentials(rhoUp, rhoDown){
+function pbeExcPotentials(rhoUp, rhoDown, part='xc'){
   const gUp = pbeDDdr(rhoUp), gDown = pbeDDdr(rhoDown);
   const dfdnUp = new Float64Array(NR), dfdnDown = new Float64Array(NR);
   const dfdgUp = new Float64Array(NR), dfdgDown = new Float64Array(NR);
   for (let i=0;i<NR;i++){
     if (rhoUp[i]<PBE_DENSITY_FLOOR && rhoDown[i]<PBE_DENSITY_FLOOR) continue; // leave at 0
     const hn = Math.max(Math.abs(rhoUp[i])*1e-6, 1e-16);
-    dfdnUp[i] = (pbeExcDensityAt(rhoUp[i]+hn,rhoDown[i],gUp[i],gDown[i]) - pbeExcDensityAt(Math.max(rhoUp[i]-hn,0),rhoDown[i],gUp[i],gDown[i])) / (2*hn);
+    dfdnUp[i] = (pbeExcDensityAt(rhoUp[i]+hn,rhoDown[i],gUp[i],gDown[i],part) - pbeExcDensityAt(Math.max(rhoUp[i]-hn,0),rhoDown[i],gUp[i],gDown[i],part)) / (2*hn);
     const hn2 = Math.max(Math.abs(rhoDown[i])*1e-6, 1e-16);
-    dfdnDown[i] = (pbeExcDensityAt(rhoUp[i],rhoDown[i]+hn2,gUp[i],gDown[i]) - pbeExcDensityAt(rhoUp[i],Math.max(rhoDown[i]-hn2,0),gUp[i],gDown[i])) / (2*hn2);
+    dfdnDown[i] = (pbeExcDensityAt(rhoUp[i],rhoDown[i]+hn2,gUp[i],gDown[i],part) - pbeExcDensityAt(rhoUp[i],Math.max(rhoDown[i]-hn2,0),gUp[i],gDown[i],part)) / (2*hn2);
     const hg = Math.max(Math.abs(gUp[i])*1e-6, 1e-12);
-    dfdgUp[i] = (pbeExcDensityAt(rhoUp[i],rhoDown[i],gUp[i]+hg,gDown[i]) - pbeExcDensityAt(rhoUp[i],rhoDown[i],gUp[i]-hg,gDown[i])) / (2*hg);
+    dfdgUp[i] = (pbeExcDensityAt(rhoUp[i],rhoDown[i],gUp[i]+hg,gDown[i],part) - pbeExcDensityAt(rhoUp[i],rhoDown[i],gUp[i]-hg,gDown[i],part)) / (2*hg);
     const hg2 = Math.max(Math.abs(gDown[i])*1e-6, 1e-12);
-    dfdgDown[i] = (pbeExcDensityAt(rhoUp[i],rhoDown[i],gUp[i],gDown[i]+hg2) - pbeExcDensityAt(rhoUp[i],rhoDown[i],gUp[i],gDown[i]-hg2)) / (2*hg2);
+    dfdgDown[i] = (pbeExcDensityAt(rhoUp[i],rhoDown[i],gUp[i],gDown[i]+hg2,part) - pbeExcDensityAt(rhoUp[i],rhoDown[i],gUp[i],gDown[i]-hg2,part)) / (2*hg2);
   }
   function divergenceTerm(dfdg){
     const weighted = dfdg.map((v,i)=>v*rg[i]*rg[i]);
@@ -2825,6 +2853,48 @@ function densityFromResult(result){
     for (let i=0;i<NR;i++){ rhoA[i]+= na*oa[i]*oa[i]/(4*Math.PI); rhoB[i]+= (nb&&ob? nb*ob[i]*ob[i]:0)/(4*Math.PI); }
   }
   return {rhoA, rhoB};
+}
+// V(r) and its components for a converged SCF result, on the radial grid, per spin, in hartree: the nuclear attraction -Z/r, the Hartree potential, the exchange potential and the
+// correlation potential, and their sum (the local potential each electron of that spin moves in). p = { method, correlation }, the same keys the app and scfNumerical use
+// (method 'lda' with correlation 'pbe' is the PBE GGA; 'rscan' the meta-GGA). Available for the methods that HAVE a local potential:
+//   Hartree   : nuclear + Hartree (no exchange, no correlation);
+//   LDA       : Dirac exchange v_x = -(6 rho_sigma / pi)^(1/3) plus the chosen correlation functional's potential (none / Wigner / VWN / PW92);
+//   PBE       : the GGA exchange and correlation potentials separately (the SCF's own potential, split with pbeExcPotentials' `part`);
+//   KLI, OEP  : the exact-exchange local potential the SCF used (no correlation).
+// NOT available, with the reason returned: Hartree-Fock (exchange is a non-local operator) and rSCAN (a meta-GGA: its exchange-correlation term depends on the kinetic-energy
+// density and modifies the kinetic operator, so there is no single multiplicative V(r)). The components are recomputed from the converged density, except KLI/OEP, whose potential
+// is orbital-dependent and is taken from the result; for LDA and PBE exchange + correlation reproduces the potential the SCF itself used (result.VxA/VxB) to the SCF's convergence.
+function potentialComponents(Z, result, p){
+  const method = p.method, corr = p.correlation || 'none';
+  if (method === 'hf') return { available:false, reason:'Hartree–Fock exchange is a non-local operator: it acts on each orbital differently and cannot be written as a single potential V(r). KLI and OEP give the best local-potential approximations to it.' };
+  if (method === 'lda' && corr === 'rscan') return { available:false, reason:'rSCAN is a meta-GGA: its exchange-correlation term depends on the kinetic-energy density and modifies the kinetic operator itself, so there is no single multiplicative potential V(r).' };
+  const zeros = () => new Float64Array(NR);
+  const vx = { a: zeros(), b: zeros() }, vc = { a: zeros(), b: zeros() };
+  let kind;
+  if (method === 'hartree'){ kind = 'Hartree'; }
+  else if (method === 'kli' || method === 'oep'){
+    kind = method === 'kli' ? 'KLI exact exchange' : 'OEP exact exchange';
+    vx.a = Float64Array.from(result.VxA); vx.b = Float64Array.from(result.VxB);
+  } else if (method === 'lda' && corr === 'pbe'){
+    kind = 'PBE (GGA)';
+    const { rhoA, rhoB } = densityFromResult(result);
+    const px = pbeExcPotentials(rhoA, rhoB, 'x'), pc = pbeExcPotentials(rhoA, rhoB, 'c');
+    vx.a = Float64Array.from(px.VxcUp); vx.b = Float64Array.from(px.VxcDown); vc.a = Float64Array.from(pc.VxcUp); vc.b = Float64Array.from(pc.VxcDown);
+  } else if (method === 'lda'){
+    kind = corr === 'none' ? 'LDA exchange only' : 'LDA';
+    const { rhoA, rhoB } = densityFromResult(result), entry = CORRELATION_FUNCTIONALS[corr];
+    for (let i=0;i<NR;i++){
+      vx.a[i] = -Math.cbrt(6*Math.max(rhoA[i],0)/Math.PI); vx.b[i] = -Math.cbrt(6*Math.max(rhoB[i],0)/Math.PI);
+      if (entry && entry.epsC){ const [u, d] = correlationPotentialAt(entry.epsC, rhoA[i], rhoB[i]); vc.a[i] = u; vc.b[i] = d; }
+    }
+  } else return { available:false, reason:'No local potential is defined for this method.' };
+  const nuclear = Float64Array.from(rg, r => -Z/r), hartree = Float64Array.from(result.VH);
+  const total = { a: zeros(), b: zeros() }; let spinPolarized = false;
+  for (let i=0;i<NR;i++){
+    total.a[i] = nuclear[i] + hartree[i] + vx.a[i] + vc.a[i]; total.b[i] = nuclear[i] + hartree[i] + vx.b[i] + vc.b[i];
+    if (Math.abs(vx.a[i]-vx.b[i]) > 1e-9 || Math.abs(vc.a[i]-vc.b[i]) > 1e-9) spinPolarized = true;
+  }
+  return { available:true, kind, nuclear, hartree, exchange:vx, correlation:vc, total, spinPolarized, hasExchange: method !== 'hartree', hasCorrelation: method === 'lda' && corr !== 'none' };
 }
 // The correlation energy Ec[n] = int eps_c(r)*n(r) d^3r itself, evaluated under EVERY functional in
 // the registry (not just whichever one drove the self-consistent field) on one given density — the
@@ -3716,6 +3786,15 @@ const OEP_MAX_STEP = 3;    // largest Barzilai-Borwein step
 const OEP_TRUST = 5e-3;    // trust region: one step moves delta (the OEP minus KLI potential, a milli-hartree quantity) by at most this much anywhere
 const OEP_CALM = 8;        // consecutive iterations with the residual below OEP_TOL that count as converged
 const OEP_TOL = 1.5e-4;    // optimality residual max|F|/max(S)
+// The SECOND optimiser (limited-memory BFGS on the same correction delta; see oepLbfgsStep), run in addition to the Barzilai-Borwein one: scfNumerical('oep') runs both and
+// keeps the LOWER energy. Both energies are determinant energies of the final orbitals, i.e. upper bounds on the OEP minimum, so the lower one is the better bound. Measured on
+// H-Kr (neutral atoms): L-BFGS converged all 36 at the tolerance below, was lower than the BB result for 32 of them (mean 0.055, up to 0.195 mHa for Kr) and 25-40% faster
+// from phosphorus on, but higher for B, O, Cr and Ti (by 0.01-0.09 mHa), which is why both are run.
+const OEP_TOL_LBFGS = 1e-5;
+const OEP_LBFGS_M = 15;           // curvature pairs kept
+const OEP_LBFGS_COS = 0.1;        // skip a pair whose angle is too small: its curvature estimate is noise and gives enormous steps
+const OEP_LBFGS_EPS = 0.01;       // floor of the inner-product weight, relative to its maximum (without it the outer region is invisible and the step explodes there: calcium)
+const OEP_PRECOND_FLOOR = 1e-5;   // the gradient is F/(S + floor*max S): the plain F/S amplifies noise where the density is tiny
 // Sanity check against a runaway state that satisfies the residual test by accident: the OEP HOMO must stay within this of the HOMO of a converged KLI run on the same atom
 // (both are pinned by the same condition). ANIONS ONLY: runaways occurred only for unbound anions, never for a neutral atom or a cation in any sweep, and the premise
 // does NOT hold for open-d atoms (scandium's majority-spin HOMO sits 0.146 Ha from the KLI value although its OEP is converged and correct), so applying it there rejected a
@@ -3728,6 +3807,46 @@ function homoOfSpin(shells, spins, eig, s){
   return h;
 }
 const experimental = { oepAnyZ: false };
+// Exact-exchange OEP is run with BOTH optimisers and the result with the LOWER total energy is returned (a determinant energy of the final orbitals is an upper bound on the
+// OEP minimum, so the lower one is the better bound). A converged run is preferred to an unconverged one whatever the energies. res.oepOptimiser names the winner and
+// res.oepCandidates lists both. Every other method is a single run, as before.
+async function scfNumerical(Z, method, maxit=60, mix=0.3, charge=0, relativistic=false, corrFunctional='pw92', onProgress=null){
+  if (method !== 'oep') return scfNumericalRun(Z, method, maxit, mix, charge, relativistic, corrFunctional, onProgress, 'bb', null);
+  if (relativistic) throw new Error('KLI/OEP is not implemented with the relativistic (ZORA) Hamiltonian');
+  if (charge < 0 && Z > OEP_ANION_MAX_Z && !experimental.oepAnyZ) throw new Error(`OEP anions are validated for H-Ar only (Z <= ${OEP_ANION_MAX_Z}); this is Z=${Z} with charge ${charge}`);
+  if (Z > OEP_MAX_Z && !experimental.oepAnyZ) throw new Error(`OEP is available for H-Kr only (Z <= ${OEP_MAX_Z}): heavier atoms have not been validated`);
+  let pre = null;       // anions: the converged-KLI HOMO reference for the runaway guard, computed once and shared by both runs
+  if (charge < 0){ const kliRun = await scfNumericalRun(Z, 'kli', 100, mix, charge, false, corrFunctional); pre = { ok: kliRun.converged, ref: { a: homoOfSpin(kliRun.shells, kliRun.spins, kliRun.eig, 'a'), b: homoOfSpin(kliRun.shells, kliRun.spins, kliRun.eig, 'b') } }; }
+  const part = k => onProgress ? ((it, mx) => onProgress(k*mx + it, 2*mx)) : null;
+  const p = { method:'oep', basis:'numerical', correlation:'none', relativistic:false, charge };
+  const cand = [];
+  for (const [k, opt] of [[0,'bb'],[1,'lbfgs']]){ const res = await scfNumericalRun(Z, 'oep', maxit, mix, charge, false, corrFunctional, part(k), opt, pre); cand.push({ opt, res, E: totalEnergy(Z, res, p) }); }
+  const conv = cand.filter(c => c.res.converged), pool = conv.length ? conv : cand;
+  const best = pool.reduce((x, y) => y.E < x.E ? y : x);
+  best.res.oepOptimiser = best.opt;
+  best.res.oepCandidates = cand.map(c => ({ optimiser: c.opt, energy: c.E, iterations: c.res.iterations, converged: !!c.res.converged }));
+  return best.res;
+}
+// Limited-memory BFGS (two-loop recursion) for the OEP correction. x = delta WITHOUT the additive gauge constant (that changes no orbital, so it would feed the update
+// displacements along a direction of zero curvature), g = the preconditioned gradient, w = the inner-product weight. Returns the proposed new x.
+function oepLbfgsStep(st, x, g, w){
+  const n = x.length, dot = (a,b)=>{ let t=0; for (let i=0;i<n;i++) t += w[i]*a[i]*b[i]; return t; };
+  const sd = () => Float64Array.from(x,(v,i)=> v - 0.5*g[i]);
+  if (!st.px){ st.px = Float64Array.from(x); st.pg = Float64Array.from(g); st.dX = []; st.dG = []; return sd(); }
+  st.dX.push(Float64Array.from(x,(v,i)=> v - st.px[i])); st.dG.push(Float64Array.from(g,(v,i)=> v - st.pg[i]));
+  st.px = Float64Array.from(x); st.pg = Float64Array.from(g);
+  if (st.dX.length > OEP_LBFGS_M){ st.dX.shift(); st.dG.shift(); }
+  const pairs = [];
+  for (let j=0;j<st.dX.length;j++){ const sy = dot(st.dX[j], st.dG[j]);
+    if (sy > 1e-30 && sy > OEP_LBFGS_COS*Math.sqrt(dot(st.dX[j],st.dX[j])*dot(st.dG[j],st.dG[j]))) pairs.push({ s: st.dX[j], y: st.dG[j], rho: 1/sy }); }
+  if (!pairs.length) return sd();
+  const q = Float64Array.from(g), al = new Array(pairs.length);
+  for (let j=pairs.length-1;j>=0;j--){ al[j] = pairs[j].rho*dot(pairs[j].s, q); for (let i=0;i<n;i++) q[i] -= al[j]*pairs[j].y[i]; }
+  const last = pairs[pairs.length-1], gam0 = dot(last.s,last.y)/dot(last.y,last.y);
+  for (let i=0;i<n;i++) q[i] *= gam0;
+  for (let j=0;j<pairs.length;j++){ const be = pairs[j].rho*dot(pairs[j].y, q); for (let i=0;i<n;i++) q[i] += pairs[j].s[i]*(al[j]-be); }
+  return Float64Array.from(x,(v,i)=> v - q[i]);
+}
 // The OEP is the local potential that minimises the exact-exchange energy. Its orbital shifts solve (h - eps_i) psi~_i = Q_i (v_x - u_i) R_i
 // (Q_i projects out R_i; u_i R_i = -(K R_i)) and the OEP condition is  sum_i q_i R_i psi~_i = 0. Written with the symmetric form
 // (R psi~' - psi~ R') the expression  v_x = v_S + sum_i w_i c_i - (1/2n) sum_i div(R_i grad psi~_i - psi~_i grad R_i)  is an IDENTITY for any
@@ -3961,7 +4080,7 @@ function spinOrbitSplitting(l, radialFactorValue){
  *   methods always run the full maxit. For HF, exchangeDampedAt is the iteration at which the adaptive exchange
  *   damping engaged (null if it never did).
  */
-async function scfNumerical(Z, method, maxit=60, mix=0.3, charge=0, relativistic=false, corrFunctional='pw92', onProgress=null){
+async function scfNumericalRun(Z, method, maxit=60, mix=0.3, charge=0, relativistic=false, corrFunctional='pw92', onProgress=null, oepOpt='bb', oepPre=null){
   if ((method==='kli' || method==='oep') && relativistic) throw new Error('KLI/OEP is not implemented with the relativistic (ZORA) Hamiltonian');
   if (method==='oep' && charge < 0 && Z > OEP_ANION_MAX_Z && !experimental.oepAnyZ) throw new Error(`OEP anions are validated for H-Ar only (Z <= ${OEP_ANION_MAX_Z}); this is Z=${Z} with charge ${charge}`);
   if (method==='oep' && Z > OEP_MAX_Z && !experimental.oepAnyZ) throw new Error(`OEP is available for H-Kr only (Z <= ${OEP_MAX_Z}): heavier atoms have not been validated`);
@@ -3971,8 +4090,8 @@ async function scfNumerical(Z, method, maxit=60, mix=0.3, charge=0, relativistic
   // iteration is a damped cycle whose density change dips below the phase threshold transiently, so a reference taken then was 0.15 Ha from the settled value and the guard
   // rejected a good result. This costs one extra KLI run (~4-8% of the OEP time) and does not touch the OEP iteration itself. If that KLI run does not converge, neither
   // can the OEP be trusted (its warm-up is KLI), so the result is reported unconverged.
-  let oepKliRef = null, oepKliOK = true;
-  if (method==='oep' && charge < 0){
+  let oepKliRef = oepPre ? oepPre.ref : null, oepKliOK = oepPre ? oepPre.ok : true;
+  if (method==='oep' && charge < 0 && !oepPre){
     const kliRun = await scfNumerical(Z, 'kli', 100, mix, charge, false, corrFunctional);
     oepKliOK = kliRun.converged;
     oepKliRef = { a: homoOfSpin(kliRun.shells, kliRun.spins, kliRun.eig, 'a'), b: homoOfSpin(kliRun.shells, kliRun.spins, kliRun.eig, 'b') };
@@ -3997,7 +4116,7 @@ async function scfNumerical(Z, method, maxit=60, mix=0.3, charge=0, relativistic
   // orbital energies swinging by 40% between phases, the reported energy ~0.2 Ha too high -- reported as an
   // ordinary finished run, and numerical Hartree failing the same way on iron with no sign of it either.
   let xOrb = null, aX = 1, diffHist = [], dampedAt = null, lastDiff = null, itersRun = 0;
-  let oepPrev = { a:null, b:null }, oepRes = null, oepPhase = false, oepHomoRef = oepKliRef, oepDelta = { a:null, b:null }, oepCalm = 0;       // OEP: previous (potential, gradient) per spin for the Barzilai-Borwein step; latest optimality residual
+  let oepPrev = { a:null, b:null }, oepRes = null, oepPhase = false, oepHomoRef = oepKliRef, oepDelta = { a:null, b:null }, oepCalm = 0, oepLb = { a:null, b:null };       // OEP: previous (potential, gradient) per spin for the Barzilai-Borwein step; latest optimality residual
   const oepHomoOK = (eigNow) => !oepHomoRef || ['a','b'].every(s => { const r = oepHomoRef[s]; if (!isFinite(r)) return true; const h = homoOfSpin(shells, spins, eigNow, s); return isFinite(h) && Math.abs(h - r) < OEP_HOMO_TOL; });
   const openSpecs = method==='hf' ? openShellSpecs(cfg) : {};       // partly filled spin-shells (HF only)
 
@@ -4135,6 +4254,23 @@ async function scfNumerical(Z, method, maxit=60, mix=0.3, charge=0, relativistic
         if (!Fs){ upd[s] = old[s]; continue; }
         let mx = 0; for (let i=0;i<NR;i++) mx = Math.max(mx, Ss[i]);
         const g = Float64Array.from(Fs, (F,i)=>{ const f = Math.min(1, Math.max(0, Math.log10(Ss[i]/(1e-8*mx))/2)); return f>0 ? f*F/Ss[i] : 0; });
+        let vNew;
+        if (oepOpt === 'lbfgs'){
+          // L-BFGS on the gauge-free delta (see oepLbfgsStep). Same residual measure and trust region as the Barzilai-Borwein path; the gradient is preconditioned with a floored
+          // density, and the inner product has a floored weight, so that neither the noisy outer region nor the deep core dominates the curvature pairs.
+          { let mF = 0; for (let i=0;i<NR;i++) if (rg[i]>0.01 && rg[i]<12 && Ss[i]>1e-6*mx) mF = Math.max(mF, Math.abs(Fs[i])); resNow = Math.max(resNow, mF/mx); }
+          const st = oepLb[s] || (oepLb[s] = { xp: oepDelta[s] ? Float64Array.from(oepDelta[s]) : new Float64Array(NR), px:null, pg:null, dX:[], dG:[] });
+          const fT = Float64Array.from(Ss, v => Math.min(1, Math.max(0, Math.log10(v/(1e-8*mx))/2)));
+          const gU = Float64Array.from(Fs, (F,i)=> fT[i] > 0 ? fT[i]*F/(Ss[i] + OEP_PRECOND_FLOOR*mx) : 0);
+          let bm = 0; const base = Float64Array.from(Ss, (v,i)=> v*rg[i]*rg[i]); for (const v of base) if (v > bm) bm = v;
+          const wv = Float64Array.from(base, (v,i)=> fT[i] > 0 ? v + OEP_LBFGS_EPS*bm : 0);
+          const x0 = st.xp; let dN = oepLbfgsStep(st, x0, gU, wv);
+          let mxd = 0; for (let i=0;i<NR;i++){ const a = Math.abs(dN[i]-x0[i]); if (!(a <= 1e30)){ mxd = Infinity; break; } if (a > mxd) mxd = a; }
+          if (!isFinite(mxd)) dN = Float64Array.from(x0,(v,i)=> v - 0.5*gU[i]);
+          else if (mxd > OEP_TRUST){ const f = OEP_TRUST/mxd; dN = Float64Array.from(x0,(v,i)=> v + f*(dN[i]-v)); }
+          st.xp = Float64Array.from(dN);
+          vNew = Float64Array.from(vK, (v,i)=> v + dN[i]);
+        } else {
         // Barzilai-Borwein step: alpha = <s,s>/<s,y> in the S-weighted metric, s = change of potential, y = change of gradient
         let step = alpha; const pv = oepPrev[s];
         if (pv){
@@ -4149,7 +4285,8 @@ async function scfNumerical(Z, method, maxit=60, mix=0.3, charge=0, relativistic
         // (C-: delta reached 0.17 Ha within two steps) and the steepest descent runs away unless one step is limited by it. A fixed step cap does not do this: the
         // stable step is ~0.1 for C-, ~1 for O- and F-, and 3 for the neutrals and the d-block, which a single cap would either destabilise or slow 5-10x.
         { let gmax = 0; for (let i=0;i<NR;i++){ const a = Math.abs(g[i]); if (a > gmax) gmax = a; } if (gmax > 0) step = Math.min(step, OEP_TRUST/gmax); }
-        const d0 = oepDelta[s], vNew = Float64Array.from(vK, (v,i)=> v + (d0 ? d0[i] : 0) - step*g[i]);
+        const d0 = oepDelta[s]; vNew = Float64Array.from(vK, (v,i)=> v + (d0 ? d0[i] : 0) - step*g[i]);
+        }
         // Gauge: F cannot see an additive constant (it changes no orbital and no energy), so the interior would drift relative to the -1/r
         // tail and shift every eigenvalue. Fix it as KLI does, and as the exact OEP satisfies: <R_h| v_x + K |R_h> = 0 for the HOMO, by adding
         // a constant with the same taper as the step (so the asymptotic tail is untouched).
@@ -4161,7 +4298,7 @@ async function scfNumerical(Z, method, maxit=60, mix=0.3, charge=0, relativistic
           if (isFinite(kappa)) for (let i=0;i<NR;i++){ const f = Math.min(1, Math.max(0, Math.log10(Ss[i]/(1e-8*mx))/2)); vNew[i] += kappa*f; } }
         oepDelta[s] = Float64Array.from(vNew, (v,i)=> v - vK[i]); upd[s] = vNew;
       }
-      if (oepPhase){ oepRes = resNow; oepCalm = resNow < OEP_TOL ? oepCalm + 1 : 0; }   // consecutive iterations below the threshold: a transient dip (the BB step oscillates) is not convergence
+      if (oepPhase){ oepRes = resNow; oepCalm = resNow < (oepOpt==='lbfgs' ? OEP_TOL_LBFGS : OEP_TOL) ? oepCalm + 1 : 0; }   // consecutive iterations below the threshold: a transient dip (the BB step oscillates) is not convergence
       VxA = upd.a; VxB = upd.b;
     }
     // the OEP step has already moved VxA/VxB on to the NEXT iteration's potential; the orbitals and eigenvalues belong to the one they were computed
@@ -4498,7 +4635,7 @@ function buildPeriodicRecord(Z, raw, p){
 
 // ---------- job-time estimator (data generated by make_timing_data.mjs) ----------
 /*TIMING_DATA_BEGIN*/
-const TIMING_DATA = {"anchors":[2,10,18,36,54,79,118],"benchRefMs":170,"cells":{"basis|hartree|minimal|none|N":[0.08,0.239,0.167,0.304,0.198,0.238,0.338],"basis|hartree|minimal|none|R":[0.208,0.143,0.097,0.183,0.266,0.322,0.553],"basis|hartree|minimal+|none|N":[0.03,0.056,0.121,0.146,0.227,0.298,0.469],"basis|hartree|minimal+|none|R":[0.042,0.114,0.148,0.256,0.361,0.532,0.638],"basis|hartree|et|none|N":[0.08,0.151,0.158,0.269,0.336,0.471,0.604],"basis|hartree|et|none|R":[0.123,0.229,0.248,0.43,0.542,0.728,1.094],"basis|lda|minimal|local|N":[0.178,0.195,0.267,0.342,0.444,0.549,0.801],"basis|lda|minimal|local|R":[0.28,0.303,0.277,0.397,0.541,0.69,0.969],"basis|lda|minimal+|local|N":[0.17,0.232,0.306,0.444,0.539,0.708,1.064],"basis|lda|minimal+|local|R":[0.2,0.285,0.383,0.498,0.777,0.906,1.365],"basis|lda|et|local|N":[0.36,0.513,0.56,0.77,1,1.34,1.711],"basis|lda|et|local|R":[0.382,0.601,0.646,1.019,1.239,1.53,2.124],"basis|lda|minimal|pbe|N":[0.801,0.815,0.764,0.799,1,1.29,1.375],"basis|lda|minimal|pbe|R":[0.665,0.704,0.741,0.82,0.965,1.24,1.485],"basis|lda|minimal+|pbe|N":[0.634,0.675,0.859,0.92,1.113,1.378,1.539],"basis|lda|minimal+|pbe|R":[0.746,0.788,0.883,1.056,1.322,1.554,1.803],"basis|lda|et|pbe|N":[0.802,0.996,0.993,1.321,1.457,1.791,2.148],"basis|lda|et|pbe|R":[0.853,1.155,1.134,1.408,1.622,2.124,2.383],"basis|lda|minimal|rscan|N":[1.392,1.997,1.851,2.06,2.276,2.682,2.929],"basis|lda|minimal|rscan|R":[1.222,1.941,2.346,2.251,2.433,2.909,3.052],"basis|lda|minimal+|rscan|N":[1.28,2.143,2.203,2.348,2.569,3.147,3.519],"basis|lda|minimal+|rscan|R":[1.273,2.313,2.257,2.407,2.851,3.223,3.541],"basis|lda|et|rscan|N":[1.382,2.468,2.4,2.69,4.25,3.723,3.915],"basis|lda|et|rscan|R":[1.712,2.47,2.386,2.748,3.001,3.655,4.195],"basis|hf|minimal|none|N":[0.245,0.393,0.368,1.143,2.467,4.221,10.565],"basis|hf|minimal|none|R":[0.212,0.207,0.368,1.043,2.511,4.256,11.014],"basis|hf|minimal+|none|N":[0.05,0.234,0.634,1.748,3.576,6.468,14.511],"basis|hf|minimal+|none|R":[0.051,0.219,0.598,1.886,4.171,6.558,14.924],"basis|hf|et|none|N":[0.583,1.38,1.855,4.802,7.783,14.412,28.052],"basis|hf|et|none|R":[0.627,1.202,1.898,5.309,8.191,14.599,27.683],"basis|hartree|dz|none|N":[0.134,0.189,0.242,0.396,0.625,0.853,1.414],"basis|hartree|dz|none|R":[0.427,0.271,0.352,0.66,0.987,1.366,2.322],"basis|lda|dz|local|N":[0.272,0.442,0.711,1.186,1.815,2.508,3.735],"basis|lda|dz|local|R":[0.636,0.632,0.809,1.383,2.133,2.84,4.6],"basis|lda|dz|pbe|N":[1.249,1.171,1.345,1.759,2.436,3.194,4.375],"basis|lda|dz|pbe|R":[1.441,1.347,1.461,2.096,2.761,3.797,5.165],"basis|lda|dz|rscan|N":[1.996,3.195,3.287,3.736,4.69,5.585,7.164],"basis|lda|dz|rscan|R":[1.716,2.949,3.186,3.795,4.646,5.745,7.348],"basis|hf|dz|none|N":[0.225,0.528,1.743,5.534,12.876,21.378,51.992],"basis|hf|dz|none|R":[0.198,0.571,1.832,5.469,12.576,21.911,52.732],"grid|hartree|numerical|none|N":[0.721,1.125,1.821,2.481,3.246,3.8,5.164],"grid|hartree|numerical|none|R":[0.329,0.432,0.641,1.04,1.417,1.949,2.577],"grid|lda|numerical|local|N":[0.699,1.231,1.82,2.55,3.301,4.146,5.451],"grid|lda|numerical|local|R":[0.368,0.604,0.855,1.225,1.636,1.996,2.732],"grid|lda|numerical|pbe|N":[1.479,1.967,2.445,3.237,4.021,4.998,5.916],"grid|lda|numerical|pbe|R":[0.854,1.481,1.712,2.184,2.472,3.196,3.714],"grid|lda|numerical|rscan|N":[1.788,3.398,3.528,3.92,4.493,5.312,5.716],"grid|lda|numerical|rscan|R":[1.384,3.038,3.457,4.039,4.52,5.275,6.433],"grid|kli|numerical|none|N":[1.048,1.563,2.628,5.022,7.924,11.66,20.684],"grid|oep|numerical|none|N":[1.06,4.4,16.997,71.139,71.139,71.139,71.139]},"hfgrid":{"Z":[2,4,10,18,21,26,36,54,79,118],"first":[0.166,0.218,0.392,0.584,1.142,1.116,0.915,1.098,2.45,2.179],"perIter":[0.026,0.044,0.078,0.122,0.436,0.506,0.314,0.445,2.118,1.639],"iterations":[[2,35],[4,42],[10,49],[18,51],[21,51],[26,52],[36,53],[54,54]],"iterTail":53}};
+const TIMING_DATA = {"anchors":[2,10,18,36,54,79,118],"benchRefMs":170,"cells":{"basis|hartree|minimal|none|N":[0.08,0.239,0.167,0.304,0.198,0.238,0.338],"basis|hartree|minimal|none|R":[0.208,0.143,0.097,0.183,0.266,0.322,0.553],"basis|hartree|minimal+|none|N":[0.03,0.056,0.121,0.146,0.227,0.298,0.469],"basis|hartree|minimal+|none|R":[0.042,0.114,0.148,0.256,0.361,0.532,0.638],"basis|hartree|et|none|N":[0.08,0.151,0.158,0.269,0.336,0.471,0.604],"basis|hartree|et|none|R":[0.123,0.229,0.248,0.43,0.542,0.728,1.094],"basis|lda|minimal|local|N":[0.178,0.195,0.267,0.342,0.444,0.549,0.801],"basis|lda|minimal|local|R":[0.28,0.303,0.277,0.397,0.541,0.69,0.969],"basis|lda|minimal+|local|N":[0.17,0.232,0.306,0.444,0.539,0.708,1.064],"basis|lda|minimal+|local|R":[0.2,0.285,0.383,0.498,0.777,0.906,1.365],"basis|lda|et|local|N":[0.36,0.513,0.56,0.77,1,1.34,1.711],"basis|lda|et|local|R":[0.382,0.601,0.646,1.019,1.239,1.53,2.124],"basis|lda|minimal|pbe|N":[0.801,0.815,0.764,0.799,1,1.29,1.375],"basis|lda|minimal|pbe|R":[0.665,0.704,0.741,0.82,0.965,1.24,1.485],"basis|lda|minimal+|pbe|N":[0.634,0.675,0.859,0.92,1.113,1.378,1.539],"basis|lda|minimal+|pbe|R":[0.746,0.788,0.883,1.056,1.322,1.554,1.803],"basis|lda|et|pbe|N":[0.802,0.996,0.993,1.321,1.457,1.791,2.148],"basis|lda|et|pbe|R":[0.853,1.155,1.134,1.408,1.622,2.124,2.383],"basis|lda|minimal|rscan|N":[1.392,1.997,1.851,2.06,2.276,2.682,2.929],"basis|lda|minimal|rscan|R":[1.222,1.941,2.346,2.251,2.433,2.909,3.052],"basis|lda|minimal+|rscan|N":[1.28,2.143,2.203,2.348,2.569,3.147,3.519],"basis|lda|minimal+|rscan|R":[1.273,2.313,2.257,2.407,2.851,3.223,3.541],"basis|lda|et|rscan|N":[1.382,2.468,2.4,2.69,4.25,3.723,3.915],"basis|lda|et|rscan|R":[1.712,2.47,2.386,2.748,3.001,3.655,4.195],"basis|hf|minimal|none|N":[0.245,0.393,0.368,1.143,2.467,4.221,10.565],"basis|hf|minimal|none|R":[0.212,0.207,0.368,1.043,2.511,4.256,11.014],"basis|hf|minimal+|none|N":[0.05,0.234,0.634,1.748,3.576,6.468,14.511],"basis|hf|minimal+|none|R":[0.051,0.219,0.598,1.886,4.171,6.558,14.924],"basis|hf|et|none|N":[0.583,1.38,1.855,4.802,7.783,14.412,28.052],"basis|hf|et|none|R":[0.627,1.202,1.898,5.309,8.191,14.599,27.683],"basis|hartree|dz|none|N":[0.134,0.189,0.242,0.396,0.625,0.853,1.414],"basis|hartree|dz|none|R":[0.427,0.271,0.352,0.66,0.987,1.366,2.322],"basis|lda|dz|local|N":[0.272,0.442,0.711,1.186,1.815,2.508,3.735],"basis|lda|dz|local|R":[0.636,0.632,0.809,1.383,2.133,2.84,4.6],"basis|lda|dz|pbe|N":[1.249,1.171,1.345,1.759,2.436,3.194,4.375],"basis|lda|dz|pbe|R":[1.441,1.347,1.461,2.096,2.761,3.797,5.165],"basis|lda|dz|rscan|N":[1.996,3.195,3.287,3.736,4.69,5.585,7.164],"basis|lda|dz|rscan|R":[1.716,2.949,3.186,3.795,4.646,5.745,7.348],"basis|hf|dz|none|N":[0.225,0.528,1.743,5.534,12.876,21.378,51.992],"basis|hf|dz|none|R":[0.198,0.571,1.832,5.469,12.576,21.911,52.732],"grid|hartree|numerical|none|N":[0.721,1.125,1.821,2.481,3.246,3.8,5.164],"grid|hartree|numerical|none|R":[0.329,0.432,0.641,1.04,1.417,1.949,2.577],"grid|lda|numerical|local|N":[0.699,1.231,1.82,2.55,3.301,4.146,5.451],"grid|lda|numerical|local|R":[0.368,0.604,0.855,1.225,1.636,1.996,2.732],"grid|lda|numerical|pbe|N":[1.479,1.967,2.445,3.237,4.021,4.998,5.916],"grid|lda|numerical|pbe|R":[0.854,1.481,1.712,2.184,2.472,3.196,3.714],"grid|lda|numerical|rscan|N":[1.788,3.398,3.528,3.92,4.493,5.312,5.716],"grid|lda|numerical|rscan|R":[1.384,3.038,3.457,4.039,4.52,5.275,6.433],"grid|kli|numerical|none|N":[1.048,1.563,2.628,5.022,7.924,11.66,20.684],"grid|oep|numerical|none|N":[1.845,9.922,31.553,126.0,126.0,126.0,126.0]},"hfgrid":{"Z":[2,4,10,18,21,26,36,54,79,118],"first":[0.166,0.218,0.392,0.584,1.142,1.116,0.915,1.098,2.45,2.179],"perIter":[0.026,0.044,0.078,0.122,0.436,0.506,0.314,0.445,2.118,1.639],"iterations":[[2,35],[4,42],[10,49],[18,51],[21,51],[26,52],[36,53],[54,54]],"iterTail":53}};
 /*TIMING_DATA_END*/
 
 // Cost class of a job: everything that changes how expensive it is. Charge is deliberately not part of it (it
@@ -4598,7 +4735,7 @@ function oepShiftIdentity(result, s='a'){
 }
 
 window.Engine = {
-  RMAX, RMIN, NR, rg, trapz, cumtrap, slaterRkArr, getConfig, scfBasis, exactDeterminantEnergy, scfNumerical, exactDeterminantEnergyNumerical, totalEnergy, buildPeriodicRecord, estimateJobSeconds, TIMING_BENCH_REF_MS, relativisticLevelDetails, densityFromResult, correlationEnergyAllFunctionals, optimizeBasisParams
+  RMAX, RMIN, NR, rg, trapz, cumtrap, slaterRkArr, getConfig, scfBasis, exactDeterminantEnergy, scfNumerical, exactDeterminantEnergyNumerical, totalEnergy, buildPeriodicRecord, estimateJobSeconds, TIMING_BENCH_REF_MS, relativisticLevelDetails, densityFromResult, correlationEnergyAllFunctionals, optimizeBasisParams, potentialComponents
 };
 
 </script>
@@ -4662,7 +4799,7 @@ const CORR_LABEL = {none:'None (exchange only)', wigner:'Wigner (1938)', vwn:'VW
 const KLI_NOTE = "KLI approximates the optimised effective potential: the best LOCAL potential for the exact (Hartree-Fock) exchange energy. It has the exact −1/r tail and, unlike local functionals, no self-interaction for one or two electrons (it reproduces Hartree-Fock there). Numerical grid only, non-relativistic, exchange only (no correlation). Its energy is the determinant energy of its orbitals, so it lies above Hartree-Fock (by about 2 mH for neon and 7 mH for argon), and its HOMO energy is close to the Hartree-Fock one.";
 const OEP_NOTE = "OEP is the exact optimised effective potential for exchange: the local potential that minimises the total energy when the exchange energy is exact, so its energy lies between Hartree–Fock and KLI (neon: 1.7 mHa above Hartree–Fock, against 2.2 mHa for KLI). KLI is its fast approximation. It runs on the numerical grid only, with exchange only, for neutral atoms H–Kr, cations up to Kr and anions of H–Ar: the iteration converges for every one of them, in roughly 20 to 360 steps, to about 0.05 mHa. It is much slower than KLI (a minute or two for a 3d atom, nearly three minutes for krypton).";
 const MINIMAL_BASIS_NOTE = "Minimal basis: one function per occupied shell leaves the outermost orbital no room, so orbital energies, and ionisation energies read from them, are unreliable across the table (median HOMO error 57% against the numerical grid over 22 elements; neon\u2019s 2p is 86% off) and turn positive, i.e. unbound, from Z = 61 in DFT (+11 Ha for gold). Total energies stay within about 1.6% of the grid. \u2018minimal+\u2019 (one spare diffuse function per channel) removes the sign failure but stays rough (median 10%, up to ~70%); even-tempered (median 4%, worst 10%) or numerical is the one for orbital energies.";
-// Shown next to ionization energies (Periodic Trends status area, and section 5) for the bases whose orbital
+// Shown next to ionization energies (Periodic Trends status area, and section 6) for the bases whose orbital
 // energies are poor. Measured for LDA/VWN over 22 elements against the numerical grid.
 const ORBITAL_ENERGY_NOTE = "Ionisation energy here is \u2212\u03b5(HOMO), an orbital energy, and orbital energies converge much more slowly with basis size than total energies. Median error against the numerical grid (LDA/VWN, 22 elements): minimal 57%, minimal+ 10%, double-zeta 8% (worst 86%; the f-block elements stay 55\u201360% off), even-tempered 4% (worst 10%). Prefer even-tempered or numerical for ionization-energy trends.";
 const EC_PALETTE = ['#3E6B8C','#8A5A2B','#2F6F62','#9A3B2E','#6B4C9A','#B08A2E'];
@@ -4746,12 +4883,24 @@ function niceSignedGrid(minE, maxE){
   return thinned.sort((a,b)=>a-b);
 }
 
+// The components of the local potential V(r) = -Z/r + V_H + V_x + V_c drawn in the §5 tab (colours are fixed per component, not per configuration).
+const POT_COMPONENTS = [
+  { key:'total',       label:'Total V(r)',   color:'#1c1c1c', width:2.8 },
+  { key:'nuclear',     label:'Nuclear −Z/r', color:'#8a8a8a', width:1.7, dash:'2,3' },
+  { key:'hartree',     label:'Hartree',      color:'#2f6db5', width:2 },
+  { key:'exchange',    label:'Exchange',     color:'#c8552d', width:2 },
+  { key:'correlation', label:'Correlation',  color:'#2e8b57', width:2 },
+];
 const state = {
   Z: 8,
   units: { energy:'Ha', length:'bohr' },
   levelsScale: 'log', // 'log' | 'linear' — y-axis of the energy-level diagram
   levelsZoom: { minHa:null, maxHa:null }, // energy domain override, stored in raw Hartree so it survives unit switches; null = auto full range
   waveScale: 'linear', // 'linear' | 'log' — x-axis (r) of the wavefunction plot
+  potScale: 'log',     // 'linear' | 'log' — x-axis (r) of the V(r) plot (log by default: the structure is near the nucleus)
+  potShow: { total:true, nuclear:true, hartree:true, exchange:true, correlation:true }, // which components the V(r) plot draws
+  potSel: [],          // ids of the configurations the V(r) plot draws (any subset of the computed ones)
+  potTouched: false,   // true once the user has ticked/unticked anything, so an empty selection is respected instead of re-filled
   // Configurations to compare for the CURRENTLY SELECTED element — each {id, label, color, params:
   // {method,basis,correlation,relativistic,charge}}, the same five-knob shape Periodic Trends scans,
   // just computed fresh against one element rather than cached across all 118 (no caching here on
@@ -4790,6 +4939,7 @@ function initTabs(){
   }
   buttons.forEach(b=> b.addEventListener('click', ()=> activate(b.dataset.tab)));
   activate(buttons[0].dataset.tab);
+  populatePotentialSelector(); renderPotentialPlot();   // the §5 panel shows its prompt from the start, not an empty frame
 }
 function initSetupUI(){
   function buildSeg(hostId, options, current, onPick){
@@ -4801,7 +4951,7 @@ function initSetupUI(){
         [...host.children].forEach(c=> c.classList.remove('active'));
         b.classList.add('active');
         onPick(opt);
-        renderLevels(); renderEnergyTable(); renderWavePlot(); renderIonization(); renderSelfInteraction();
+        renderLevels(); renderEnergyTable(); renderWavePlot(); renderPotentialPlot(); renderIonization(); renderSelfInteraction();
       });
       host.appendChild(b);
     });
@@ -4810,6 +4960,18 @@ function initSetupUI(){
   buildSeg('lengthUnitGroup', LENGTH_UNITS, state.units.length, u=> state.units.length=u);
   buildSeg('levelsScaleGroup', ['Log','Linear'], 'Log', v=>{ state.levelsScale=v.toLowerCase(); state.levelsZoom={minHa:null,maxHa:null}; });
   buildSeg('waveScaleGroup', ['Linear','Log'], 'Linear', v=> state.waveScale=v.toLowerCase());
+  buildSeg('potScaleGroup', ['Linear','Log'], 'Log', v=> state.potScale=v.toLowerCase());
+  POT_COMPONENTS.forEach(c=>{
+    const cb = el('input',{type:'checkbox', id:'potShow_'+c.key}); cb.checked = true;
+    cb.addEventListener('change', ()=>{ state.potShow[c.key] = cb.checked; renderPotentialPlot(); });
+    document.getElementById('potShowBar').appendChild(el('label',{style:'display:flex; align-items:center; gap:.35rem; cursor:pointer;'},[cb, el('span',{style:`display:inline-block; width:1.4rem; border-top:${c.width||2}px ${c.dash?'dotted':'solid'} ${c.color};`}), c.label]));
+  });
+  ['potQuant','potYRange'].forEach(id=> document.getElementById(id).addEventListener('change', renderPotentialPlot));
+  [['All', ()=> state.configs.filter(c=>state.results[c.id]).map(c=>c.id)], ['None', ()=> []]].forEach(([name, pick])=>{
+    const b = el('button',{type:'button', class:'secondary', style:'padding:.15rem .6rem; font-size:.8rem;'},[name]);
+    b.addEventListener('click', ()=>{ state.potSel = pick(); state.potTouched = true; populatePotentialSelector(); renderPotentialPlot(); });
+    document.getElementById('potPickBtns').appendChild(b);
+  });
   document.getElementById('levelsResetZoom').addEventListener('click', ()=>{ state.levelsZoom={minHa:null,maxHa:null}; renderLevels(); });
   document.getElementById('levelsZoomIn').addEventListener('click', ()=> levelsZoomStep(0.7));
   document.getElementById('levelsZoomOut').addEventListener('click', ()=> levelsZoomStep(1/0.7));
@@ -4974,7 +5136,8 @@ function renderElementConfigListInner(){
       delete state.results[c.id];
       if (state.baselineId===c.id) state.baselineId = state.configs.length? state.configs[0].id : null;
       renderElementConfigList();
-      renderLevels(); renderEnergyTable(); renderWavePlot(); render3D(); renderIonization(); renderSelfInteraction();
+      populatePotentialSelector();
+      renderLevels(); renderEnergyTable(); renderWavePlot(); renderPotentialPlot(); render3D(); renderIonization(); renderSelfInteraction();
     });
     card.appendChild(removeBtn);
     host.appendChild(card);
@@ -5101,7 +5264,7 @@ function runComparison(){
           const raw = await Engine.scfNumerical(state.Z, method, gridMaxit(method), 0.3, charge, rel, corr, onProgress); // HF: cap raised 60 -> 100 (iron needs ~52 now that the open-shell Hartree-Fock no longer cycles)
           const Etotal = Engine.totalEnergy(state.Z, raw, {method, basis:'numerical', correlation:corr, relativistic:rel});
           const relDetails = rel ? Engine.relativisticLevelDetails(state.Z, raw) : null;
-          res = {id:c.id, cfg:raw.cfg, shells:raw.shells, spins:raw.spins, orb:raw.orb, eig:raw.eig, Etotal, basis:'numerical', method, relativistic:rel, relDetails, corr, charge, VxA:raw.VxA, VxB:raw.VxB, label:c.label, color:c.color, converged:raw.converged, iterations:raw.iterations, finalDiff:raw.finalDiff, exchangeDampedAt:raw.exchangeDampedAt};
+          res = {id:c.id, cfg:raw.cfg, shells:raw.shells, spins:raw.spins, orb:raw.orb, eig:raw.eig, Etotal, basis:'numerical', method, relativistic:rel, relDetails, corr, charge, VxA:raw.VxA, VxB:raw.VxB, VH:raw.VH, label:c.label, color:c.color, converged:raw.converged, iterations:raw.iterations, finalDiff:raw.finalDiff, exchangeDampedAt:raw.exchangeDampedAt};
         } else {
           // Same as the numerical branch above: self-consistent ZORA for every method, expressed here as a
           // mass-weighted kinetic MATRIX rebuilt every iteration (see scfBasis in engine.mjs).
@@ -5109,7 +5272,7 @@ function runComparison(){
           const raw = Engine.scfBasis(state.Z, basis, method, 6, 60, 0.3, charge, corr, null, rel);
           const Etotal = Engine.totalEnergy(state.Z, raw, {method, basis, correlation:corr, relativistic:rel});
           const relDetails = rel ? Engine.relativisticLevelDetails(state.Z, raw) : null;
-          res = {id:c.id, cfg:raw.cfg, shells:raw.shells, spins:raw.spins, orb:raw.orb, eig:raw.eig, Etotal, basis, method, relativistic:rel, relDetails, corr, charge, VxA:raw.VxA, VxB:raw.VxB, label:c.label, color:c.color};
+          res = {id:c.id, cfg:raw.cfg, shells:raw.shells, spins:raw.spins, orb:raw.orb, eig:raw.eig, Etotal, basis, method, relativistic:rel, relDetails, corr, charge, VxA:raw.VxA, VxB:raw.VxB, VH:raw.VH, label:c.label, color:c.color};
         }
         state.results[c.id] = res;
         learnTiming(pred.ref, (performance.now()-tCfg0)/1000);
@@ -5117,10 +5280,12 @@ function runComparison(){
       const ms = Math.round(performance.now()-t0);
       statusLine.textContent = `done in ${(ms/1000).toFixed(1)} s` + (predTotalSec>=3 ? ` (estimated ${fmtDuration(predTotalSec)})` : '');
       populateOrbitalSelector();
+      populatePotentialSelector();
       populateLevelsJump();
       renderLevels();
       renderEnergyTable();
       renderWavePlot();
+      renderPotentialPlot();
       render3D();
       renderIonization();
       renderSelfInteraction();
@@ -5513,6 +5678,173 @@ function renderVxcPlot(host, configId){
   }
 }
 
+
+/* ---------- §5 local potential V(r) and its components ---------- */
+// Any subset of the computed configurations can be plotted (state.potSel). With ONE configuration the colour says which component (nuclear, Hartree, exchange, correlation, total);
+// with several overlaid the colour says which CONFIGURATION (the same colours as the rest of the page) and the line style says which component. The nuclear -Z/r is the same for every
+// configuration, so it is drawn once. Configurations with no local potential (Hartree-Fock, rSCAN) are named in a note instead of being dropped silently.
+const POT_MULTI_DASH = { total:'none', hartree:'9,4', exchange:'3,3', correlation:'1,3,6,3' };
+const hasLocalPotential = r => r.method!=='hf' && r.corr!=='rscan';
+const potConfigColor = id => { const c = state.configs.find(x=>x.id===id); return (c && c.color) || EC_PALETTE[0]; };
+function populatePotentialSelector(){
+  const box = document.getElementById('potCfgList'); if (!box) return;
+  const cfgs = state.configs.filter(c=> state.results[c.id]);
+  state.potSel = state.potSel.filter(id=> cfgs.some(c=>c.id===id));
+  if (!cfgs.length) state.potTouched = false;
+  if (!state.potSel.length && !state.potTouched && cfgs.length){      // first time: open on a configuration that actually has a local potential
+    const first = cfgs.find(c=> hasLocalPotential(state.results[c.id])) || cfgs[0]; state.potSel = [first.id];
+  }
+  box.innerHTML = '';
+  cfgs.forEach(c=>{
+    const cb = el('input',{type:'checkbox', 'data-cfg':c.id}); cb.checked = state.potSel.includes(c.id);
+    cb.addEventListener('change', ()=>{ state.potTouched = true; state.potSel = cb.checked ? [...state.potSel.filter(i=>i!==c.id), c.id] : state.potSel.filter(i=>i!==c.id); renderPotentialPlot(); });
+    box.appendChild(el('label',{style:'display:flex; align-items:center; gap:.35rem; cursor:pointer; font-size:.85rem;'},[cb, el('span',{style:`display:inline-block; width:.8rem; height:.8rem; border-radius:2px; background:${c.color||EC_PALETTE[0]};`}), state.results[c.id].label]));
+  });
+}
+function potFrameRadius(res){   // where the electron density lives (the same rule the other radial views use)
+  const rg = Engine.rg, NR = Engine.NR, dens = new Float64Array(NR);
+  for (const key in res.spins){
+    const [na,nb] = res.spins[key]; const oa = res.orb.a[key], ob = res.orb.b && res.orb.b[key]; if (!oa) continue;
+    for (let i=0;i<NR;i++) dens[i] += (na*oa[i]*oa[i] + (nb&&ob? nb*ob[i]*ob[i] : 0))*rg[i]*rg[i];
+  }
+  let peak=0, peakR=0; for (let i=0;i<NR;i++){ if (dens[i]>peak){peak=dens[i]; peakR=rg[i];} }
+  let cut=peakR; for (let i=NR-1;i>=0;i--){ if (dens[i]>peak*0.01){ cut=rg[i]; break; } }
+  return Math.min(Math.max(cut*1.6, 5), 45);
+}
+function renderPotentialPlot(){
+  const host = document.getElementById('potHost'); if (!host) return;
+  host.innerHTML = '';
+  const cfgs = state.configs.filter(c=> state.results[c.id]);
+  if (!cfgs.length){ host.appendChild(el('div',{class:'empty'},['Run the comparison, then pick configurations above.'])); return; }
+  const chosen = cfgs.filter(c=> state.potSel.includes(c.id));
+  if (!chosen.length){ host.appendChild(el('div',{class:'empty'},['Tick at least one configuration above.'])); return; }
+  const items = chosen.map(c=>{ const res = state.results[c.id]; return { c, res, pc: Engine.potentialComponents(state.Z, res, {method:res.method, correlation:res.corr}) }; });
+  const drawable = items.filter(x=>x.pc.available), skipped = items.filter(x=>!x.pc.available);
+  if (!drawable.length){ skipped.forEach(x=> host.appendChild(el('div',{class:'infobox'},[`No local potential V(r) for “${x.res.label}”. ${x.pc.reason}`]))); return; }
+  const multi = drawable.length > 1;
+  const rg = Engine.rg, NR = Engine.NR;
+  const lengthUnit = state.units.length, eUnit = state.units.energy;
+  const rConv = r => lengthUnit==='Å' ? r*BOHR_TO_ANGSTROM : r;
+  const isLogX = state.potScale==='log', quant = document.getElementById('potQuant').value, yMode = document.getElementById('potYRange').value;
+  const rCutBohr = Math.max(...drawable.map(x=> potFrameRadius(x.res))), rMinBohr = Math.max(rg[1], rCutBohr*0.001);
+
+  const W=820, H=400, ML=76, MR=20, MT=20, MB=44, plotW=W-ML-MR, plotH=H-MT-MB;
+  const idx = []; for (let i=0;i<NR;i++){ if (rg[i]>rCutBohr) break; if (!isLogX || rg[i]>=rMinBohr) idx.push(i); }
+  const step = Math.max(1, Math.floor(idx.length/420)), sampled = idx.filter((_,k)=> k%step===0);
+
+  // the curves to draw
+  const comp = key => POT_COMPONENTS.find(c=>c.key===key);
+  const curves = [];
+  const push = (key, spin, arr, color, dash, opacity) => { if (state.potShow[key]) curves.push({ key, spin, arr, color, dash, opacity: opacity ?? 1, width: comp(key).width || 2 }); };
+  if (!multi){
+    const pc = drawable[0].pc;
+    push('nuclear', null, pc.nuclear, comp('nuclear').color, comp('nuclear').dash);
+    push('hartree', null, pc.hartree, comp('hartree').color, 'none');
+    push('total', 'a', pc.total.a, comp('total').color, 'none'); if (pc.spinPolarized) push('total', 'b', pc.total.b, comp('total').color, '7,4');
+    if (pc.hasExchange){ push('exchange', 'a', pc.exchange.a, comp('exchange').color, 'none'); if (pc.spinPolarized) push('exchange', 'b', pc.exchange.b, comp('exchange').color, '7,4'); }
+    if (pc.hasCorrelation){ push('correlation', 'a', pc.correlation.a, comp('correlation').color, 'none'); if (pc.spinPolarized) push('correlation', 'b', pc.correlation.b, comp('correlation').color, '7,4'); }
+    // keep the drawing order of POT_COMPONENTS (the total first, then nuclear, Hartree, exchange, correlation: as before this tab drew several configurations)
+    const order = POT_COMPONENTS.map(c=>c.key); curves.sort((p,q)=> order.indexOf(p.key) - order.indexOf(q.key));
+  } else {
+    push('nuclear', null, drawable[0].pc.nuclear, comp('nuclear').color, comp('nuclear').dash);          // identical for every configuration: drawn once
+    drawable.forEach(x=>{ const pc = x.pc, col = potConfigColor(x.c.id);
+      push('hartree', null, pc.hartree, col, POT_MULTI_DASH.hartree);
+      if (pc.hasExchange){ push('exchange', 'a', pc.exchange.a, col, POT_MULTI_DASH.exchange); if (pc.spinPolarized) push('exchange', 'b', pc.exchange.b, col, POT_MULTI_DASH.exchange, 0.5); }
+      if (pc.hasCorrelation){ push('correlation', 'a', pc.correlation.a, col, POT_MULTI_DASH.correlation); if (pc.spinPolarized) push('correlation', 'b', pc.correlation.b, col, POT_MULTI_DASH.correlation, 0.5); }
+      push('total', 'a', pc.total.a, col, POT_MULTI_DASH.total); if (pc.spinPolarized) push('total', 'b', pc.total.b, col, POT_MULTI_DASH.total, 0.5);
+    });
+  }
+  if (!curves.length){ host.appendChild(el('div',{class:'empty'},['Tick at least one component above.'])); return; }
+
+  const fe = convE(1), fr = rConv(1);                       // unit factors (hartree -> energy unit, bohr -> length unit)
+  const yOf = (arr,i)=> quant==='rv' ? arr[i]*fe*rConv(rg[i]) : arr[i]*fe;
+  const pts = curves.map(c=> sampled.map(i=> [rConv(rg[i]), yOf(c.arr,i), rg[i]]).filter(([,y])=>isFinite(y)));
+  // y-range: r·V is finite everywhere; V(r) diverges as -Z/r, so by default frame the valence region and let the core run off the plot.
+  // Only the nuclear term and the total diverge (as -Z/r) at the nucleus; the Hartree, exchange and correlation potentials are finite there, and must stay in frame.
+  const rLow = rCutBohr*0.05; let yMin=Infinity, yMax=-Infinity;
+  pts.forEach((arr,ci)=>{ const diverges = curves[ci].key==='total' || curves[ci].key==='nuclear';
+    arr.forEach(([,y,rb])=>{ if (quant==='v' && yMode==='valence' && diverges && rb<rLow){ if (y>yMax) yMax=y; return; } if (y<yMin) yMin=y; if (y>yMax) yMax=y; }); });
+  const charges = [...new Set(drawable.map(x=> x.res.charge||0))];
+  if (quant==='rv') charges.forEach(q=>{ const ref = -(q+1)*fe*fr; yMin = Math.min(yMin, ref); yMax = Math.max(yMax, ref); });
+  if (!isFinite(yMin) || yMin===yMax){ yMin = -1; yMax = 1; }
+  const pad = 0.06*(yMax-yMin); yMin -= pad; yMax += pad;
+
+  const xMin = rConv(isLogX?rMinBohr:0), xMax = rConv(rCutBohr);
+  const xScale = isLogX ? (r => ML + plotW*Math.log(r/xMin)/Math.log(xMax/xMin)) : (r => ML + plotW*(r-xMin)/(xMax-xMin));
+  const yScale = y => MT + plotH*(1-(y-yMin)/(yMax-yMin));
+
+  const svg = svgEl('svg',{class:'chart', viewBox:`0 0 ${W} ${H}`, role:'img'});
+  const clip = svgEl('clipPath',{id:'potClip'}); clip.appendChild(svgEl('rect',{x:ML,y:MT,width:plotW,height:plotH}));
+  const defs = svgEl('defs'); defs.appendChild(clip); svg.appendChild(defs);       // keeps the divergent -Z/r core inside the frame
+  const y0 = yScale(0); if (y0>=MT && y0<=MT+plotH) svg.appendChild(svgEl('line',{x1:ML,x2:ML+plotW,y1:y0,y2:y0,stroke:'var(--rule-strong)','stroke-width':1}));
+  const yTicks = niceLinearTicks(yMin,yMax), yStep = yTicks.length>1 ? Math.abs(yTicks[1]-yTicks[0]) : 1;
+  let yDec = 0; while (yDec<4 && Math.abs(yStep*Math.pow(10,yDec) - Math.round(yStep*Math.pow(10,yDec)))>1e-9) yDec++;   // as many decimals as the tick step needs, the same for every tick
+  yTicks.forEach(v=>{
+    const y = yScale(v); if (y<MT-1||y>MT+plotH+1) return;
+    svg.appendChild(svgEl('line',{x1:ML,x2:ML+plotW,y1:y,y2:y,stroke:'var(--rule)','stroke-width':1,opacity:0.5}));
+    const t = svgEl('text',{x:ML-8,y:y+3,'text-anchor':'end','font-size':11}); t.textContent = (Math.abs(v)<1e-9?0:v).toFixed(yDec); svg.appendChild(t);
+  });
+  if (isLogX){ for (let e=Math.ceil(Math.log10(xMin)); e<=Math.floor(Math.log10(xMax)); e++){ const x = xScale(Math.pow(10,e));
+    svg.appendChild(svgEl('line',{x1:x,x2:x,y1:MT,y2:MT+plotH,stroke:'var(--rule)','stroke-width':1,opacity:0.4}));
+    const t = svgEl('text',{x:x,y:MT+plotH+15,'text-anchor':'middle','font-size':11}); t.textContent = Math.pow(10,e)>=0.01 ? String(Math.pow(10,e)) : Math.pow(10,e).toExponential(0); svg.appendChild(t); } }
+  else niceLinearTicks(xMin,xMax).forEach(v=>{ const x = xScale(v); if (x<ML-1||x>ML+plotW+1) return;
+    const t = svgEl('text',{x:x,y:MT+plotH+15,'text-anchor':'middle','font-size':11}); t.textContent = fmt(v, v%1===0?0:1); svg.appendChild(t); });
+  if (quant==='rv'){   // the long-range tail of the total potential: exact exchange gives r·V -> -(q+1) for an ion of charge q (-1 for a neutral atom); LDA/GGA give -q
+    charges.forEach((q,k)=>{ const yr = yScale(-(q+1)*fe*fr);
+      svg.appendChild(svgEl('line',{x1:ML,x2:ML+plotW,y1:yr,y2:yr,stroke:'#1c1c1c','stroke-width':1,'stroke-dasharray':'1,5',opacity:0.8}));
+      const t = svgEl('text',{x:ML+8,y:yr+14+13*k,'text-anchor':'start','font-size':10.5,fill:'var(--ink-soft)'}); t.textContent = `exact-exchange tail, r·V → −${q+1}`; svg.appendChild(t); });
+  }
+  const g = svgEl('g',{'clip-path':'url(#potClip)'});
+  // Cut each polyline at the frame edge with an interpolated crossing (done by hand so the plot is right in any renderer, not only where clip-path is honoured).
+  const yLo = MT, yHi = MT+plotH, inFrame = y => y>=yLo && y<=yHi;
+  const clippedPath = P => {
+    let d = '', pen = false;
+    for (let k=0;k<P.length;k++){
+      const [x,y] = P[k];
+      if (k>0){ const [px,py] = P[k-1];
+        if (inFrame(py) !== inFrame(y)){
+          const yb = inFrame(py) ? (y<yLo ? yLo : yHi) : (py<yLo ? yLo : yHi), xb = px + (x-px)*(yb-py)/(y-py);
+          d += inFrame(py) ? `L${xb.toFixed(2)},${yb.toFixed(2)}` : `M${xb.toFixed(2)},${yb.toFixed(2)}`;
+          pen = !inFrame(py);
+        }
+      }
+      if (inFrame(y)){ d += `${pen?'L':'M'}${x.toFixed(2)},${y.toFixed(2)}`; pen = true; } else pen = false;
+    }
+    return d;
+  };
+  curves.forEach((c,ci)=>{
+    const d = clippedPath(pts[ci].map(([x,y])=> [xScale(x), yScale(y)]));
+    g.appendChild(svgEl('path',{d, fill:'none', stroke:c.color, 'stroke-width':c.width, 'stroke-dasharray':c.dash || 'none', 'stroke-opacity':c.opacity}));
+  });
+  svg.appendChild(g);
+  const xlab = svgEl('text',{x:ML+plotW/2,y:H-8,'text-anchor':'middle','font-size':11}); xlab.textContent = `r (${lengthUnit})${isLogX?' — log scale':''}`; svg.appendChild(xlab);
+  const ylab = svgEl('text',{x:16,y:MT+plotH/2,'text-anchor':'middle','font-size':11,transform:`rotate(-90 16 ${MT+plotH/2})`});
+  ylab.textContent = quant==='rv' ? `r·V(r)  (${eUnit}·${lengthUnit})` : `V(r)  (${eUnit})`; svg.appendChild(ylab);
+  host.appendChild(svg);
+
+  const legend = el('div',{class:'legend'},[]);
+  const spinPol = drawable.some(x=>x.pc.spinPolarized);
+  if (!multi){
+    POT_COMPONENTS.forEach(cp=>{ if (!curves.some(c=>c.key===cp.key)) return;
+      legend.appendChild(el('div',{class:'item'},[el('span',{class:'sw',style:`background:${cp.color}`}), cp.label])); });
+    if (spinPol) legend.appendChild(el('div',{class:'item'},['solid: spin ↑ · dashed: spin ↓ (exchange, correlation and total differ between spins)']));
+  } else {
+    drawable.forEach(x=> legend.appendChild(el('div',{class:'item'},[el('span',{class:'sw',style:`background:${potConfigColor(x.c.id)}`}), x.res.label])));
+    POT_COMPONENTS.forEach(cp=>{ if (!curves.some(c=>c.key===cp.key)) return;
+      const sample = svgEl('svg',{width:34,height:10,viewBox:'0 0 34 10','aria-hidden':'true'});
+      sample.appendChild(svgEl('line',{x1:1,x2:33,y1:5,y2:5,stroke:cp.key==='nuclear'?cp.color:'#1c1c1c','stroke-width':cp.width||2,'stroke-dasharray':cp.key==='nuclear' ? cp.dash : POT_MULTI_DASH[cp.key]}));
+      legend.appendChild(el('div',{class:'item'},[sample, cp.label + (cp.key==='nuclear' ? ' (the same for every configuration)' : '')]));
+    });
+    if (spinPol) legend.appendChild(el('div',{class:'item'},['lighter: spin ↓ (exchange, correlation and total differ between spins)']));
+  }
+  host.appendChild(legend);
+  if (skipped.length) host.appendChild(el('div',{class:'infobox'},[`Not drawn (no local potential): ${skipped.map(x=>'“'+x.res.label+'”').join(', ')}. Hartree–Fock exchange is a non-local operator and rSCAN is a meta-GGA whose exchange-correlation term depends on the kinetic-energy density: neither can be written as a single potential V(r).`]));
+  const kinds = [...new Set(drawable.map(x=>x.pc.kind))].join(' · ');
+  const tail = quant==='rv' ? ' Far from the nucleus the total tends to −(q+1)/r for exact exchange (KLI, OEP) and to −q/r for LDA and GGA, whose exchange potential dies off exponentially: the self-interaction error in the potential.' : '';
+  const how = multi ? ' Colour says which configuration, line style which component.' : '';
+  host.appendChild(el('p',{style:'font-size:.85rem; color:var(--ink-soft); margin:.6rem 0 0;'},[`${kinds}. The total is the local potential each electron of that spin moves in: −Z/r + V_H + V_x${drawable.some(x=>x.pc.hasCorrelation)?' + V_c':''}. The Hartree potential here includes each electron's interaction with its own density, which exchange then cancels in part.${how}${tail}`]));
+}
+
 function renderWavePlot(){
   const host = document.getElementById('waveHost');
   host.innerHTML='';
@@ -5652,7 +5984,7 @@ function renderWavePlot(){
   host.appendChild(legend);
 }
 
-/* ---------- §5 ionization energy (Koopmans) ---------- */
+/* ---------- §6 ionization energy (Koopmans) ---------- */
 function renderIonization(){
   const host = document.getElementById('ieHost');
   host.innerHTML='';
@@ -5695,7 +6027,7 @@ function renderIonization(){
     host.appendChild(el('p',{class:'basisnote', style:'margin-top:.6rem; max-width:70ch;'},[ORBITAL_ENERGY_NOTE]));
 }
 
-/* ---------- §6 self-interaction diagnostic ---------- */
+/* ---------- §7 self-interaction diagnostic ---------- */
 function vxcSelfProjection(res, f){
   // Projects the configuration's OWN converged alpha-spin Vxc (whatever functional actually drove
   // it — Dirac exchange alone, VWN, PW92, PBE, or rSCAN) onto the HOMO orbital's own density:
@@ -5752,8 +6084,8 @@ function renderSelfInteraction(){
   host.appendChild(table);
 }
 
-/* ---------- §7 notes ---------- */
-/* ---------- §7 3D orbital shape ---------- */
+/* ---------- Notes (methodology & caveats) ---------- */
+/* ---------- §8 3D orbital shape ---------- */
 // Real spherical harmonics via associated-Legendre recursion, numerically normalized at runtime
 // (the same validated approach used for the angular-coupling physics elsewhere in this app, not
 // memorized prefactors) — a modest spherical quadrature grid built once and cached.
@@ -5894,7 +6226,7 @@ function generateTotalDensityCloud(result, count){
 const ORB3D_ZOOM_PER_PIXEL = 0.0005;   // zoom rate for the 3D view: exp(0.0005 x wheel pixels) = ~5% per 100-pixel notch
 let orb3D = null;
 let cloud3D = null; // {raw, maxDens, rCut} for the currently-selected orbital, cached until selection changes
-let tab3DActive = false; // whether the §7 tab is the one currently showing (drives the render-loop pause/resume)
+let tab3DActive = false; // whether the §8 tab is the one currently showing (drives the render-loop pause/resume)
 function init3DScene(){
   if (orb3D) return orb3D;
   const host = document.getElementById('orb3dHost');
@@ -5931,7 +6263,7 @@ function init3DScene(){
       camera.position.clampLength(1,300);
     }, {passive:false});
 
-    // Render loop only runs while the §7 tab is actually visible — with tabbed sections now
+    // Render loop only runs while the §8 tab is actually visible — with tabbed sections now
     // hiding inactive panels via CSS, a Three.js canvas left running under `display:none` would
     // otherwise keep rendering to a hidden surface forever, burning CPU/GPU for no visible benefit.
     let rafId = null;
@@ -6095,8 +6427,8 @@ function refilter3D(){
   });
 }
 
-/* ---------- §8 basis set convergence ---------- */
-// §8 picks ONE configuration (by id) from the same list §1 builds, rather than a bare method name —
+/* ---------- §9 basis set convergence ---------- */
+// §9 picks ONE configuration (by id) from the same list §1 builds, rather than a bare method name —
 // but only reads that configuration's method, charge and correlation functional from it: basis and
 // relativistic treatment are the two things this whole section exists to vary/hold fixed itself (a
 // non-relativistic numerical reference throughout, same as always), so the picked configuration's
@@ -7229,7 +7561,7 @@ function initModeSwitch(){
 function renderNotes(){
   document.getElementById('notesBody').innerHTML = `
 <h3>Scope and conventions</h3>
-<p><b>Scope.</b> Elements Z = 1–118 (H–Og): s and p orbitals throughout, d orbitals from scandium (Z=21) onward, and f orbitals through the lanthanides (La–Lu) and actinides (Ac–Lr). No g orbitals are needed anywhere in this range — they only start appearing in hypothetical elements beyond Z≈121. The nucleus is a fixed point charge; only the electronic problem is solved. Configurations follow the standard Aufbau/Madelung order, including the textbook exceptions where a half-filled or filled subshell is more stable. There are more of these among the actinides than the lanthanides (six vs. three), which matches the well-known fact that 5f and 6d sit closer in energy than 4f and 5d did: actinium and thorium have no 5f electrons at all ([Rn] 6d<sup>1</sup>7s<sup>2</sup> and 6d<sup>2</sup>7s<sup>2</sup>), protactinium through neptunium have mixed 5f/6d configurations, and curium repeats gadolinium's half-filled-shell pattern (5f<sup>7</sup>6d<sup>1</sup>7s<sup>2</sup>). Lawrencium (Z=103) is shown as [Rn] 5f<sup>14</sup>6d<sup>1</sup>7s<sup>2</sup>, still the more commonly used assignment, but this is a genuinely live question — more recent relativistic calculations and some experimental work argue for 7s<sup>2</sup>7p<sup>1</sup> instead. Beyond lawrencium, configurations follow naive Aufbau filling (6d, then 7p) with no further hand-verified exceptions; for these very short-lived, laboratory-synthesized elements, ground-state configurations are increasingly theoretical predictions rather than direct measurements. "HOMO" in §5–§6 is identified by actual orbital energy, not Aufbau list position — different methods can and do disagree about which orbital that is for these elements (e.g. iron and gadolinium both show this in practice). Open-shell atoms are treated with a spherically-averaged (configuration-average) self-consistent field, then the total energy is re-evaluated exactly for the specific Hund's-rule occupation (highest-spin, most-negative-m<sub>l</sub>-first) using a single Slater determinant. The angular-momentum coupling weights needed for this (direct and exchange integrals between s, p, d, and f electrons) were derived from numerical Gaunt-coefficient quadrature and cross-checked against known textbook fractions for the lighter angular momenta before being trusted for f.</p>
+<p><b>Scope.</b> Elements Z = 1–118 (H–Og): s and p orbitals throughout, d orbitals from scandium (Z=21) onward, and f orbitals through the lanthanides (La–Lu) and actinides (Ac–Lr). No g orbitals are needed anywhere in this range — they only start appearing in hypothetical elements beyond Z≈121. The nucleus is a fixed point charge; only the electronic problem is solved. Configurations follow the standard Aufbau/Madelung order, including the textbook exceptions where a half-filled or filled subshell is more stable. There are more of these among the actinides than the lanthanides (six vs. three), which matches the well-known fact that 5f and 6d sit closer in energy than 4f and 5d did: actinium and thorium have no 5f electrons at all ([Rn] 6d<sup>1</sup>7s<sup>2</sup> and 6d<sup>2</sup>7s<sup>2</sup>), protactinium through neptunium have mixed 5f/6d configurations, and curium repeats gadolinium's half-filled-shell pattern (5f<sup>7</sup>6d<sup>1</sup>7s<sup>2</sup>). Lawrencium (Z=103) is shown as [Rn] 5f<sup>14</sup>6d<sup>1</sup>7s<sup>2</sup>, still the more commonly used assignment, but this is a genuinely live question — more recent relativistic calculations and some experimental work argue for 7s<sup>2</sup>7p<sup>1</sup> instead. Beyond lawrencium, configurations follow naive Aufbau filling (6d, then 7p) with no further hand-verified exceptions; for these very short-lived, laboratory-synthesized elements, ground-state configurations are increasingly theoretical predictions rather than direct measurements. "HOMO" in §6–§7 is identified by actual orbital energy, not Aufbau list position — different methods can and do disagree about which orbital that is for these elements (e.g. iron and gadolinium both show this in practice). Open-shell atoms are treated with a spherically-averaged (configuration-average) self-consistent field, then the total energy is re-evaluated exactly for the specific Hund's-rule occupation (highest-spin, most-negative-m<sub>l</sub>-first) using a single Slater determinant. The angular-momentum coupling weights needed for this (direct and exchange integrals between s, p, d, and f electrons) were derived from numerical Gaunt-coefficient quadrature and cross-checked against known textbook fractions for the lighter angular momenta before being trusted for f.</p>
 <p><b>Charge</b> is a per-configuration choice: a nonzero charge changes the electron count (Z − charge) while the nuclear charge stays fixed at Z, for that one configuration only, so a neutral-atom configuration and an ion of the same element can sit side by side in the same comparison. Cations remove electrons in the order real ionisation actually follows, not simply the reverse of how the neutral atom was built up: the highest-n electrons go first, and within the same n, higher l before lower l. This deliberately reproduces two well-known, easy-to-get-wrong cases: transition metals lose their ns electrons before (n−1)d ones — Fe²⁺ comes out [Ar]3d⁶, not [Ar]4s²3d⁴, even though 4s filled before 3d in the neutral atom — and heavier p-block cations show the "inert pair effect", losing np before the ns pair beneath it (Sn²⁺ comes out [Kr]4d¹⁰ 5s², not 5s⁰ 5p²). Anions, by contrast, are simply built as isoelectronic with the neutral atom of atomic number Z−charge (O²⁻ really is isoelectronic with Ne, and is constructed that way here) — correct for ordinary main-group anions, a looser approximation for anything more exotic, and not intended to claim that a given multiply-charged anion is actually a stable, physically observable species (most aren't, outside a crystal lattice). One caveat worth knowing if you compare energies across different charge states of the same element: each charge state's double-zeta or even-tempered basis is re-derived independently via Slater's rules for that specific ion, so raw total-energy differences between charge states can occasionally come out in the wrong order purely from that basis mismatch (successive ionisation energies must always be positive; a basis-driven violation of that is a giveaway). The minimal basis and the numerical method don't have this problem, since there's no extra per-ion optimisation for it to introduce.</p>
 <p><b>Configurations.</b> §1 is built from configurations: every one you add bundles its own method, basis, correlation functional, relativistic treatment and charge together, and any number can be compared side by side (not just one of each). This is what makes a comparison like "HF vs. PW92 vs. PBE vs. rSCAN, all at once" or "the same method with relativity off vs. on" just two different configurations on the same list, rather than something the page would need to special-case. One radio button per configuration picks which one is the Δ-column baseline in §3; removing the current baseline falls back to whichever configuration is now first in the list.</p>
 <h3>Methods</h3>
@@ -7239,11 +7571,12 @@ function renderNotes(){
 <p><b>DFT functionals (the correlation dropdown, shown in §1's configuration builder whenever "DFT" is the chosen method).</b> "LDA" in the DFT literature always means exchange <i>and</i> correlation together; without this, the method here would really be a differently-named exchange-only approximation, which is exactly what "None" now spells out explicitly rather than leaving implicit. The other three options are staged historically, each a strictly more sophisticated fit to the same uniform-electron-gas correlation problem: Wigner (1938), the simplest closed-form interpolation; VWN (1980), implemented as the fit to the random-phase-approximation correlation energy (the variant some codes call VWN3 or VWN-RPA; the fit to quantum Monte Carlo data, VWN5, is not the one used here), validated against the exact high-density limit of RPA theory to 5 significant figures. Because it is the RPA fit it correlates more strongly than PW92: on the same densities its correlation energy is 26–34% larger (helium −0.149 against −0.111 hartree, neon −0.945 against −0.740, argon −1.796 against −1.423); and PW92 (1992), a different, more modern parametrisation of the same underlying physics, fitted to the Ceperley–Alder quantum Monte Carlo data for the uniform gas (as are the Perdew–Zunger and VWN5 fits, neither of which is implemented here). PW92 is the default correlation for the LDA option, and it is also the uniform-gas part of this app\u2019s PBE correlation, so an LDA-versus-PBE comparison isolates the gradient correction instead of mixing it with a change of uniform-gas correlation; VWN stays available as the RPA fit. One honest caveat: VWN and PW92 disagree by around 20% at ordinary atomic densities, more than "two modern fits to the same data" might suggest — a real, known property of how each interpolates away from the exact limit they share, not a sign either is wrong, though PW92's shape parameters (unlike its leading constants, which are the exact theoretical values) could not be independently checked against an external reference table here. A quirk worth knowing: switching functionals barely moves the total-energy column above, because that column deliberately reports the true Hamiltonian's expectation value on whichever orbitals converged (see §3's design note) — a modest potential change like correlation shifts those orbitals only slightly. The real, visible comparisons are the table below the main one, showing what each functional predicts as the correlation energy itself for this atom's converged density, and — in §4's orbital selector — the exchange-correlation potential Vxc(r) itself, the thing the dropdown is actually changing, shown as separate spin-up/spin-down curves for open-shell atoms. For iron specifically, turning correlation on is a nice illustration of just how close the famous 3d/4s ordering competition really is: the gap between them is a few thousandths of a Hartree either way, and correlation is enough to flip which one this method reports as outermost — not a bug, a genuine reflection of how delicately balanced that competition is in real transition-metal chemistry. The fourth option, PBE (1996), is a different kind of entry on this list rather than a further historical refinement of the same correlation-only idea: it's a GGA, depending on the density's gradient as well as its local value, and it replaces both the exchange and correlation treatment together rather than adding a correlation piece on top of the fixed Slater/Dirac exchange the other three options share. One numerically delicate point worth recording here, since it very nearly shipped wrong: PBE's correlation correction involves a term that behaves like 0/0 as the local correlation energy density shrinks toward zero, which happens routinely well out in any atom's exponential density tail, long before the density itself gets small enough to ignore. A naive evaluation either loses almost all precision to subtraction cancellation or produces outright NaN once that quantity underflows to exactly zero; both are fixed here (expm1 for the cancellation regime, an explicit analytic limit for the point beyond it), checked by confirming the correction smoothly tracks its expected −1 ratio to the local correlation energy all the way down rather than freezing at a spurious plateau or diverging.</p>
 <p><b>rSCAN (2019, meta-GGA).</b> The fifth option is a further step up the same ladder as PBE, not a refinement of it: a meta-GGA, depending on the orbital kinetic energy density τ in addition to the density and its gradient. That extra dependence changes the physics in a way no local potential can express — varying the energy with respect to each orbital shows τ's presence modifies the kinetic operator itself, with a position-dependent coefficient multiplying ∇²ψ, not just an added term in the potential. On the numerical grid this is exactly the same mathematical structure already built for the relativistic (ZORA) treatment described under Relativistic effects below, so rather than fit rSCAN into the local-potential pattern every other configuration here uses, it reuses that same generalised eigenvalue solver with τ's coefficient standing in for ZORA's position-dependent mass — and why it combines naturally with the relativistic treatment: the two masses simply add (see the relativistic note below). The basis-set version generalises the same idea into matrix form instead of a finite-difference stencil: the usual kinetic matrix element, a fixed number computed once per basis-function pair, becomes a position-dependent-mass–weighted integral (∫a'(r)b'(r)M(r)r²dr + l(l+1)∫a(r)b(r)M(r)dr, M=1/2+τ-dependent term) that has to be rebuilt every iteration since M depends on the self-consistent density — unlike every other method here, which computes its kinetic matrix once and reuses it unchanged throughout. Checked directly against the numerical method's own rSCAN results, element by element from hydrogen through the actinides: the gap between the two is consistently the same size PBE's or VWN's own basis-incompleteness gap already is for that same atom and basis, not something larger or specific to rSCAN. Two numerically delicate points, both hiding genuine physics rather than ordinary bugs, were caught building the original numerical-grid version and carry over unchanged to the basis-set one: first, τ−τ_W (the orbital-dependent piece τ actually needs) is a subtraction of two quantities that individually vanish in an atom's tail at nearly the same rate, so evaluating it directly loses essentially all precision exactly where it matters; used here instead is an exact identity recasting it as a sum of squared cross-terms between every pair of occupied shells, which is never a near-cancellation and is manifestly non-negative, as the physical quantity itself must be. Second, the gradient-dependent potential's divergence term approaches a finite, nonzero value at the nucleus for any real atomic cusp, which makes its standard radial form (a derivative plus the term divided by r) genuinely diverge like 1/r there — the same functional form as the nuclear attraction itself, handled analytically near the origin for the same reason the nuclear singularity already is, rather than evaluated numerically where finite-difference noise dominates. That near-origin handling was built for the numerical grid eigensolver's own reconstruction noise, which a basis-set orbital — a smooth, exact sum of Slater functions — never actually has; reused unchanged for the basis-set path anyway rather than built twice, since it was confirmed directly to recover an orbital's exact near-origin value to a few parts in a million even with nothing to repair. All constants and formulas were read directly from the reference implementation's own published source rather than reconstructed from memory, and cross-checked against its own computed output across dozens of test points spanning six orders of magnitude in density — but that checked the energy density and its derivatives one at a time, which turned out not to be enough (see "A correction to rSCAN's self-consistent operator", under Corrections to earlier versions).</p>
 <p><b>KLI: local exact exchange (numerical grid only).</b> Hartree-Fock gives every orbital its own non-local exchange operator; a density functional gives all electrons one local potential built from the density. The optimised effective potential (OEP) is the best of both: the single local potential that minimises the energy of the exact exchange expression. The approximation of Krieger, Li and Iafrate (KLI) builds it from the Slater potential v<sub>S</sub>(r) = Σ n<sub>i</sub>(r)u<sub>i</sub>(r)/n(r), with u<sub>i</sub> = −(K̂φ<sub>i</sub>)/φ<sub>i</sub>, plus orbital-density-weighted constants that follow from a small linear system; the constant is fixed by leaving the highest occupied orbital out of the sum, which gives the exact −1/r tail. The result differs from the exact OEP by about a millihartree for closed shells, and for one or two electrons it is the exact OEP and equals Hartree-Fock. What it offers beyond a local functional: no self-interaction error for one electron (hydrogen comes out at exactly −0.5 hartree), the correct long-range potential, and a HOMO energy close to the Hartree-Fock one (neon −0.8494 against −0.8497). Its orbitals come from one local potential per spin, so they are not variational minimisers of the determinant energy, and its energy (the determinant energy of its orbitals, as for Hartree-Fock) lies <i>above</i> Hartree-Fock: by 0.74 mH for beryllium, 2.21 for neon, 3.92 for magnesium and 7.03 for argon on this grid, against published KLI minus Hartree-Fock gaps of about 0.7, 2.3, 4.3 and 7 (from memory), and by 10.8 and 15.4 mH for scandium and iron. Open shells use every occupied orbital (n, l, m, spin) as its own KLI orbital with the exact m-resolved exchange weights, and only the potential is spherically averaged; averaging the exchange over the m states of a partly filled shell leaves most of a lone d electron's self-Hartree energy uncancelled and made scandium and iron cycle forever. It is available on the numerical grid only (a finite-basis exchange-only OEP is ill-posed, because a truncated orbital basis leaves the response function with a null space, so that finite-basis OEP potentials depend on the basis in a way that does not converge in the usual sense), without a relativistic form, and without correlation. The total energy reported is that of Hartree-Fock type (the exact-exchange energy of the KLI orbitals), so it can be compared with Hartree-Fock directly.</p>
-<p><b>OEP: the exact optimised effective potential (numerical grid, H–Kr).</b> The OEP is the local potential that minimises the total energy when the exchange energy is exact, so its energy lies between Hartree-Fock (the minimum over all non-local operators) and KLI (one particular local potential). This engine writes the potential as the KLI potential, rebuilt from the orbitals at every iteration, plus a small correction (the OEP minus KLI, about 0.1 to 4 mHa in the energy). To first order the energy changes by 2∫δv(r)F(r)d³r, where F is the sum over orbitals of q<sub>i</sub>R<sub>i</sub>ψ̃<sub>i</sub> and ψ̃<sub>i</sub> are the orbital shifts, each one linear (Numerov) equation, so the correction takes steepest-descent steps preconditioned by the density and sized by a Barzilai-Borwein estimate. Letting the KLI part follow the density matters: with the whole potential held fixed between steps, the self-Hartree response of a lone 3d electron is not cancelled and scandium cycled forever. The additive constant, which changes no orbital and no energy, is fixed by the same HOMO condition as in KLI, so orbital energies sit on the usual scale. Against published OEP total energies (quoted from memory): Be −14.5724 (published −14.5724), Ne −128.5454 (−128.5454), Ar −526.812 (−526.8122). There the OEP lies 0.15, 0.56 and 1.7 mHa below KLI; scandium and iron lie 2.3 and 2.9 mHa below KLI and 8.5 and 12.4 mHa above Hartree-Fock. Every neutral element from H to Kr converges and none ends above its own KLI energy, which an exact OEP cannot do; so do the cations from H up to Kr (K<sup>+</sup> to Kr<sup>+</sup> lie 1.8 to 3.0 mHa below KLI and above Hartree-Fock) and the anions F<sup>−</sup>, O<sup>−</sup>, C<sup>−</sup> and Cl<sup>−</sup> (the weakly bound anions needed a trust region that limits how far the correction can move in one step). Beyond argon the anions are not reliable and are not offered: of the eighteen, Ca<sup>−</sup> to Ni<sup>−</sup> and Kr<sup>−</sup> are unbound in exact exchange itself, K<sup>−</sup>, V<sup>−</sup>, Cu<sup>−</sup> and Ga<sup>−</sup> are bound so weakly that the iteration does not converge in 500 steps, and only Zn<sup>−</sup>, Ge<sup>−</sup>, As<sup>−</sup>, Se<sup>−</sup> and Br<sup>−</sup> converged. An unbound anion can drive the iteration to a runaway state that satisfies the residual test by accident (Co<sup>−</sup> reached +4,700 Ha), so a result is also rejected as unconverged if the OEP HOMO moves more than 0.05 Ha from the KLI HOMO it started from (valid cases move by at most 0.004 Ha). The iteration is declared converged when the optimality residual stays below 1.5×10<sup>−4</sup> for eight consecutive iterations, which leaves the energy within about 0.05 mHa of fully converged, after roughly 20 to 360 steps (a minute or two for a 3d atom, nearly three minutes for krypton). <b>Limits:</b> heavier atoms have not been run, so OEP is offered for neutral atoms and cations H–Kr and for anions H–Ar only; there is no basis-set or relativistic form, and no correlation.</p>
+<p><b>OEP: the exact optimised effective potential (numerical grid, H–Kr).</b> The OEP is the local potential that minimises the total energy when the exchange energy is exact, so its energy lies between Hartree-Fock (the minimum over all non-local operators) and KLI (one particular local potential). This engine writes the potential as the KLI potential, rebuilt from the orbitals at every iteration, plus a small correction (the OEP minus KLI, about 0.1 to 4 mHa in the energy). To first order the energy changes by 2∫δv(r)F(r)d³r, where F is the sum over orbitals of q<sub>i</sub>R<sub>i</sub>ψ̃<sub>i</sub> and ψ̃<sub>i</sub> are the orbital shifts, each one linear (Numerov) equation, so the correction can be optimised by steepest-descent steps preconditioned by the density and sized by a Barzilai-Borwein estimate. Two optimisers are run and the lower energy is kept: that one, and a limited-memory BFGS (quasi-Newton) update on the same correction, which learns the curvature of the problem and converges to a tighter tolerance. For the 36 neutral atoms H–Kr the quasi-Newton result was lower for 32 (by 0.055 mHa on average, up to 0.195 mHa for Kr) and the steepest-descent one for B, O, Ti and Cr (by 0.01 to 0.09 mHa), which is why both are run. Either energy is the energy of the determinant of the final orbitals, so it is an upper bound on the true OEP minimum, and the lower of the two is the better bound. Letting the KLI part follow the density matters: with the whole potential held fixed between steps, the self-Hartree response of a lone 3d electron is not cancelled and scandium cycled forever. The additive constant, which changes no orbital and no energy, is fixed by the same HOMO condition as in KLI, so orbital energies sit on the usual scale. Against published OEP total energies (quoted from memory): Be −14.5724 (published −14.5724), Ne −128.5454 (−128.5454), Ar −526.812 (−526.8122). There the OEP lies 0.15, 0.56 and 1.7 mHa below KLI; scandium and iron lie 2.3 and 2.9 mHa below KLI and 8.5 and 12.4 mHa above Hartree-Fock. Every neutral element from H to Kr converges and none ends above its own KLI energy, which an exact OEP cannot do; so do the cations from H up to Kr (K<sup>+</sup> to Kr<sup>+</sup> lie 1.8 to 3.0 mHa below KLI and above Hartree-Fock) and the anions F<sup>−</sup>, O<sup>−</sup>, C<sup>−</sup> and Cl<sup>−</sup> (the weakly bound anions needed a trust region that limits how far the correction can move in one step). Beyond argon the anions are not reliable and are not offered: of the eighteen, Ca<sup>−</sup> to Ni<sup>−</sup> and Kr<sup>−</sup> are unbound in exact exchange itself, K<sup>−</sup>, V<sup>−</sup>, Cu<sup>−</sup> and Ga<sup>−</sup> are bound so weakly that the iteration does not converge in 500 steps, and only Zn<sup>−</sup>, Ge<sup>−</sup>, As<sup>−</sup>, Se<sup>−</sup> and Br<sup>−</sup> converged. An unbound anion can drive the iteration to a runaway state that satisfies the residual test by accident (Co<sup>−</sup> reached +4,700 Ha), so a result is also rejected as unconverged if the OEP HOMO moves more than 0.05 Ha from the KLI HOMO it started from (valid cases move by at most 0.004 Ha). Each iteration is declared converged when its optimality residual stays below a tolerance for eight consecutive iterations (1.5×10<sup>−4</sup> for steepest descent, 10<sup>−5</sup> for the quasi-Newton update). The steepest-descent tolerance leaves its energy 0.02 mHa too high for neon, 0.05 for argon, 0.11 for zinc and about 0.2 for krypton (a few percent of the OEP−KLI difference), and the quasi-Newton one removes most of that, but the residual only looks at the region where the density is not tiny, so for the open d-block atoms and the weakly bound anions the returned energy may still lie about 0.1 mHa above the true minimum. A run takes 20 to 360 steps of each optimiser: about a minute for a 3d atom and two minutes for krypton on the reference machine, since two optimisers are run. <b>Limits:</b> heavier atoms have not been run, so OEP is offered for neutral atoms and cations H–Kr and for anions H–Ar only; there is no basis-set or relativistic form, and no correlation.</p>
 <h3>Basis sets</h3>
+<p><b>The local potential V(r) and its components (§5).</b> For a method that has one, this tab draws the local potential each electron moves in, V(r) = −Z/r + V<sub>H</sub> + V<sub>x</sub> + V<sub>c</sub>, and every term separately: the nuclear attraction, the Hartree potential (which includes each electron's interaction with its own density), the exchange potential and the correlation potential, per spin for an open-shell atom. Tick any one, several or all of the computed configurations (the All and None buttons help): with one ticked the colour says which component, with several the colour says which configuration (the same colours as the rest of the page) and the line style says which component, the nuclear term being the same for all and drawn once, and a configuration with no local potential is named in a note. Curves that coincide hide each other (the LDA and PBE totals are almost identical beyond about a bohr). Hartree has only the first two; LDA has Dirac exchange plus the chosen correlation functional; PBE has its gradient-corrected exchange and correlation; KLI and OEP have the exact-exchange potential and no correlation. Hartree-Fock and rSCAN have no such potential, and the tab says why: Hartree-Fock exchange is a non-local operator, and rSCAN's exchange-correlation term depends on the kinetic-energy density and changes the kinetic operator itself. The components are recomputed from the converged density (for KLI and OEP, which depend on the orbitals, the potential the self-consistent field used is shown). For LDA the exchange and correlation parts add up to the potential the SCF itself used to rounding (10<sup>−15</sup> Ha), for PBE to the SCF's convergence (3×10<sup>−7</sup> Ha), and PBE's own exchange and correlation parts add up to its combined potential to a relative 4×10<sup>−8</sup> from r = 0.005 bohr outward, 9×10<sup>−6</sup> (of the maximum in the window) below r = 0.001 bohr, and 2×10<sup>−3</sup> pointwise at the very first grid point, where the numerical derivative of the density is noisy. The r·V(r) view shows the long-range tail: for an ion of charge q the exact-exchange total tends to −(q+1) (neon with KLI: −1.0035 at 12 bohr; Ne<sup>+</sup>: −2.0030), while the LDA and PBE totals tend to zero (neon: −0.0020 and −0.0000), because their exchange potential decays exponentially. That is the self-interaction error as it appears in the potential instead of in the energies. The −Z/r core diverges, so the V(r) view frames the valence region and cuts the curves at the frame edge (the full-range option shows it).</p>
 <p><b>Basis sets.</b> <i>Minimal</i> is one Slater-type orbital (STO) per occupied shell, with exponents from Slater's rules. <i>Double-zeta+</i> adds a second, more diffuse STO per shell and one spare diffuse function per angular-momentum channel; <i>minimal+</i> is the minimal basis plus the same spare function. <i>Even-tempered</i> uses a geometric series of exponents (at least N, adjustable, but automatically given a few extra functions beyond N when an element needs more shells than N to avoid a basis with no spare variational freedom — found to matter for elements with many shells of one angular momentum, like lanthanum's six occupied s-shells). <i>Numerical</i> solves the radial equation directly, self-consistently, with no basis-set error at all. For Hartree and the DFT functionals this means a simple per-point potential and a direct tridiagonal solve; Hartree-Fock's exchange operator is non-local, so there it instead means diagonalising the Fock operator over a radial basis built from the self-consistent potential's own bound states (exactly reproducing the plain-Hartree answer when exchange is switched off) enriched with bound states of the bare nucleus at a few effective charges, which is what actually gives exchange room to lower the energy — states of the self-consistent potential alone run out almost immediately, with anything beyond them turning out to be a grid-boundary artefact rather than a real virtual orbital. This makes numerical Hartree-Fock meaningfully slower than the other methods (see the notes on convergence and job-time estimates) but no less exact in principle. All of these — the STO integrals underlying the basis methods, and the numerical method's finite-difference solve — share the same logarithmic radial grid (dense near the nucleus, sparse in the diffuse outer region) rather than a uniform one, which matters for accuracy well beyond the wavefunction plot's appearance: a uniform grid fine enough for the outer region under-resolves the inner structure badly enough to shift a heavy atom's innermost eigenvalue by several percent.</p>
-<p><b>Basis exponent optimisation.</b> The double-zeta basis, as built for any configuration in §1, uses the same fixed 1.35/0.75 exponent spread for every atom and every shell (plus one spare diffuse function per channel, described under "Orbital energies" below), regardless of whether that split actually suits the atom in question — a real, if easy to overlook, limitation, since only the linear expansion coefficients are ever variationally optimised (by the SCF itself); the exponents are otherwise a fixed, untuned guess. §8's convergence sweep runs a genuine nested optimisation on top of this for its own "double-zeta (optimised)" bar: a derivative-free line search (golden-section search, validated against known analytic minima before being trusted here) adjusts each occupied shell's exponent spread, per angular-momentum channel, to actually minimise that specific configuration's own SCF energy, re-running the full self-consistent field many times along the way. The improvement is often substantial, not marginal — around 0.1 Ha for a light atom like oxygen, several Hartree for iron — which is itself a useful lesson: a basis this small is never close to the complete-basis limit, no matter how it's tuned, but how it's tuned still matters quite a bit. The same idea was tried for the even-tempered basis too and deliberately left out: its existing margin heuristic already adapts to each atom's own natural exponent range (dz's fixed ratio does not), so there was much less room for optimisation to find, at a much higher computational cost — not every "more sophisticated-sounding" idea is worth shipping once actually measured. Expect §8's optimised bar to be the slow step, especially for heavier elements: it means re-running the SCF dozens of times rather than once, and Hartree-Fock's exchange cost compounds that further for many-shelled atoms, so for atoms with more than two occupied angular-momentum channels (most transition metals, lanthanides, actinides) only the s and p exponents are optimised — the chemically central ones that every atom has — while d and f are left at the heuristic rather than letting the worst case grow without bound. This optimisation isn't currently offered as a per-configuration choice in §1 itself — every double-zeta configuration there uses the fixed heuristic spread — only within §8's own sweep.</p>
-<p><b>Basis set convergence (§8) and why bigger isn't always reported as better.</b> The intuitive expectation — a larger, more flexible basis should always give a lower (better) energy — is only strictly guaranteed for Hartree-Fock, since it alone is properly variational against the same true Hamiltonian being compared against. Selecting Hartree-Fock here should show exactly that clean, monotonic improvement toward the numerical reference line as the basis grows — a useful contrast with what Hartree and the DFT functionals do instead. For those, something subtler is true: the quantity plotted and reported throughout this app as "total energy" is deliberately the expectation value of the <i>true</i> Hamiltonian on whichever orbitals the method converged to (see §3's design note) — not the Hartree or DFT energy functional that the self-consistent field itself was actually minimising. Those are different functionals. A larger basis gives Hartree or DFT more room to lower <i>their own</i> (self-interaction-flawed) functional, but there is no theorem guaranteeing that this also lowers the <i>true</i> Hamiltonian's expectation value reported here — so it is entirely possible, and not a bug, to see §8 report a smaller basis outperforming a larger one for these two methods specifically. It's a genuine, if initially counterintuitive, illustration of the same self-interaction theme §6 is built around: these methods aren't variational in the usual textbook sense for the quantity being compared, and basis convergence results for them should be read with that in mind.</p>
+<p><b>Basis exponent optimisation.</b> The double-zeta basis, as built for any configuration in §1, uses the same fixed 1.35/0.75 exponent spread for every atom and every shell (plus one spare diffuse function per channel, described under "Orbital energies" below), regardless of whether that split actually suits the atom in question — a real, if easy to overlook, limitation, since only the linear expansion coefficients are ever variationally optimised (by the SCF itself); the exponents are otherwise a fixed, untuned guess. §9's convergence sweep runs a genuine nested optimisation on top of this for its own "double-zeta (optimised)" bar: a derivative-free line search (golden-section search, validated against known analytic minima before being trusted here) adjusts each occupied shell's exponent spread, per angular-momentum channel, to actually minimise that specific configuration's own SCF energy, re-running the full self-consistent field many times along the way. The improvement is often substantial, not marginal — around 0.1 Ha for a light atom like oxygen, several Hartree for iron — which is itself a useful lesson: a basis this small is never close to the complete-basis limit, no matter how it's tuned, but how it's tuned still matters quite a bit. The same idea was tried for the even-tempered basis too and deliberately left out: its existing margin heuristic already adapts to each atom's own natural exponent range (dz's fixed ratio does not), so there was much less room for optimisation to find, at a much higher computational cost — not every "more sophisticated-sounding" idea is worth shipping once actually measured. Expect §9's optimised bar to be the slow step, especially for heavier elements: it means re-running the SCF dozens of times rather than once, and Hartree-Fock's exchange cost compounds that further for many-shelled atoms, so for atoms with more than two occupied angular-momentum channels (most transition metals, lanthanides, actinides) only the s and p exponents are optimised — the chemically central ones that every atom has — while d and f are left at the heuristic rather than letting the worst case grow without bound. This optimisation isn't currently offered as a per-configuration choice in §1 itself — every double-zeta configuration there uses the fixed heuristic spread — only within §9's own sweep.</p>
+<p><b>Basis set convergence (§9) and why bigger isn't always reported as better.</b> The intuitive expectation — a larger, more flexible basis should always give a lower (better) energy — is only strictly guaranteed for Hartree-Fock, since it alone is properly variational against the same true Hamiltonian being compared against. Selecting Hartree-Fock here should show exactly that clean, monotonic improvement toward the numerical reference line as the basis grows — a useful contrast with what Hartree and the DFT functionals do instead. For those, something subtler is true: the quantity plotted and reported throughout this app as "total energy" is deliberately the expectation value of the <i>true</i> Hamiltonian on whichever orbitals the method converged to (see §3's design note) — not the Hartree or DFT energy functional that the self-consistent field itself was actually minimising. Those are different functionals. A larger basis gives Hartree or DFT more room to lower <i>their own</i> (self-interaction-flawed) functional, but there is no theorem guaranteeing that this also lowers the <i>true</i> Hamiltonian's expectation value reported here — so it is entirely possible, and not a bug, to see §9 report a smaller basis outperforming a larger one for these two methods specifically. It's a genuine, if initially counterintuitive, illustration of the same self-interaction theme §7 is built around: these methods aren't variational in the usual textbook sense for the quantity being compared, and basis convergence results for them should be read with that in mind.</p>
 <p><b>Orbital energies, the minimal basis, and minimal+.</b> Total energies converge quickly with basis size — the minimal basis is within about 1.6% of the numerical grid everywhere tested — but orbital energies, and so ionisation energies read from −ε<sub>HOMO</sub>, converge much more slowly, because the outermost orbital is the one a basis describes worst. Measured against the numerical grid for LDA/VWN over 22 elements, the median error in the HOMO energy is <b>57%</b> for the minimal basis, 10% for minimal+, 8% for double-zeta and <b>4%</b> for even-tempered (worst 10%); the number of elements off by more than 25% is 15, 4, 5 and 0. Neon shows it plainly: its 2p HOMO is −0.0705 Ha in the minimal basis, −0.459 in double-zeta (−0.320 before it gained its spare diffuse function), −0.445 in minimal+ and −0.5172 in even-tempered, against −0.5165 on the grid. The most dramatic symptom is a change of sign. The minimal basis has exactly one function per occupied shell, so each angular-momentum channel has no spare capacity and its top orbital is whatever is left once the inner ones are accommodated; for the s channel that fails at six shells (Cs onward): the LDA/VWN 6s eigenvalue is −0.107 Ha at Z=56 (grid −0.134), +0.100 at Z=61, +11.1 at gold and +36 for uranium's 7s, against about −0.15 on the grid, and 58 of 118 elements have a non-negative HOMO. This was tested rather than assumed. It is not numerical (in the cases examined the overlap matrices are well conditioned, smallest eigenvalue ≥ 0.15), and not a poor exponent choice: shrinking Slater's exponents by 0.8 gives a sensible eigenvalue but makes the total energy worse (−13155.9 against −13193.7 Ha at Z=70) and enlarging them makes both explode, so Slater's rules already sit near the energy optimum and an <i>optimised</i> minimal basis would have the same problem — energy-optimal exponents spend the span on the cores and leave the valence orbital as the leftover. It is the definition. <b>minimal+</b> keeps the same Slater functions and adds one spare diffuse function per channel (exponent a factor of 5 below the most diffuse shell's), the device the even-tempered basis already uses. It removes the sign failure (no non-negative HOMO in any of the 118 elements) and lowers the total energy, and gold's ionisation energy comes out at 0.191 Ha against 0.188 on the grid — but it stays rough: the median HOMO error is still 10%, and four of the 22 elements are 40–70% off (Kr, Sn, Xe, Gd). The placement of the spare function is a weak lever once the sign is right (a spare 1.7 times below gives the same worst case), so treat minimal+ as a cheap patch for the sign failure, not as a good basis for orbital energies. <b>Double-zeta had the same disease, and now carries the same remedy.</b> Without a spare function its LDA/VWN HOMO was positive at Nd and Yb (172% and 280% off) and 46% off at Zn, with a median error of 8% but seven of the 22 elements above 25%. It now includes one spare diffuse function per channel (a factor of 5 below the most diffuse Slater exponent, as in minimal+): none of the 22 elements has a non-negative HOMO, five are above 25%, the worst case falls from 280% to 86%, neon's error from 38% to 11%, and the total energy of every method that minimises what it reports (Hartree-Fock, DFT) goes down, because a spare only enlarges the basis (shifting the diffuse exponent instead helped the HOMO but made the energy <i>worse</i> by about 0.3 Ha). The Hartree row is the exception, and a correct one: it reports the exchange-including determinant energy of orbitals the Hartree calculation optimised <i>without</i> exchange, so extra freedom lets them drift further from Hartree-Fock-like orbitals and the reported number rises (neon: −127.94 → −127.65 Ha), while the Hartree functional the SCF actually minimises does go down (−116.38 → −116.81). It is not a uniform improvement. No placement of the spare helped every element — a factor of 6.5 fixes gold but leaves neodymium at 70%, a factor of 2 fixes ytterbium but wrecks gold — Ds (Z=110) got worse (8% → 86%), and the f-block elements neodymium, gadolinium and uranium stay 55–60% off at every placement tried from ×2 to ×6.5, which says their error is not about diffuse capacity at all. Only the even-tempered basis was uniformly good. For these reasons Periodic Trends (a) defaults new configurations to even-tempered, which costs no more than double-zeta, (b) shows this reliability note beside any ionisation-energy plot built on a minimal, minimal+ or double-zeta basis, and (c) withholds the ionisation energy, leaving a gap and saying so, wherever a Hartree-Fock or DFT HOMO eigenvalue is not negative: an unbound outermost electron means −ε<sub>HOMO</sub> is not an ionisation energy. That last rule catches only the sign failure, not the large errors that keep the right sign, which is why the note exists. Hartree theory is exempt from the gap rule: its positive outer eigenvalues are real, the self-interaction error the app deliberately shows (hydrogen comes out at +0.125 Ha).</p>
 <h3>Periodic Trends properties</h3>
 <p><b>What each property means.</b> Every property here is read from what was stored when each element was calculated, so changing property never triggers a recalculation; the properties in this paragraph use the stored orbital energies and occupations, and the radii, energies and diagnostics described afterwards use the further quantities stored with them. <i>Ionisation energy</i> is −ε(HOMO), a Koopmans-style estimate and not a difference between total energies. <i>Orbital energy</i> is the spin-averaged eigenvalue of the chosen orbital, weighted by occupation where the two spin channels differ. <i>Valence</i> means the highest-n occupied orbital of that type, with three safeguards against mistaking a deep core shell for a valence one: a valence p must share the n of the outermost s, a valence d must lie within one shell of it, and a valence f within two (so praseodymium, whose only d shells are the filled 3d and 4d, has no valence d, and the 4f of the lanthanides is valence). <i>Shell gaps</i> are differences between those valence orbitals: ε(np)−ε(ns), ε(ns)−ε(d), ε(ns)−ε(f) and ε(d)−ε(f), each positive when the first-named level lies higher. <i>Effective nuclear charge</i> is Z* = n√(−2ε), the charge a hydrogen-like orbital with that n and energy would see; it is left as a gap where ε is not negative. <i>Valence orbital-energy electronegativity</i> is minus the occupation-weighted mean ε of the valence electrons (everything in the outermost shell plus partly filled d and f subshells). It is in the spirit of Allen's configuration-energy scale, but it comes from this app's own orbitals rather than spectroscopic energies, so its values are a trend indicator and not Allen's numbers. <i>Exchange splitting</i> is ε↓−ε↑ of the most spin-polarised subshell (the one with the most unpaired electrons; zero for a closed-shell atom), positive when the majority spin lies lower. <i>Unpaired electrons</i> are the count the high-spin Hund's-rule filling assigns, so they depend on the configuration and charge only, not on the method or basis. The <i>all occupied orbital energies</i> chart draws one line per orbital for a single configuration, starting at the first element in which that orbital is occupied, with −ε on a logarithmic axis because the energies run from about 0.1 hartree to thousands. The <i>change from previous element</i> transform subtracts each element's value from its successor's; it works on any property and is what makes shell and subshell effects, such as the dips in ionisation energy at boron and oxygen, stand out. One configuration deserves a warning: palladium, [Kr]4d¹⁰ here, has no 5s electron, so its outermost occupied shell is n = 4 and its “valence” s and p orbitals are the 4s and 4p semi-core shells; it therefore stands out in the orbital-based properties (orbital energy, Z*, shell gaps, electronegativity) for that reason and not because of any calculation. Everything built from orbital energies inherits their basis-set reliability caveats (see the note on orbital energies), and elements whose self-consistent iteration did not converge are left as gaps.</p>
@@ -7254,7 +7587,7 @@ function renderNotes(){
 <p><b>A real limitation worth stating plainly: even with relativistic corrections on, this remains an approximation.</b> Spin-orbit splitting (direct contraction of s and p orbitals moving at an appreciable fraction of the speed of light near a highly charged nucleus, indirect expansion of outer d/f orbitals through altered screening) become significant well before the actinides and dominant by the superheavy elements. Oganesson (Z=118), for instance, is theoretically predicted to have unusual, relativity-driven chemistry — quite possibly behaving more like a reactive solid than a noble gas — that even this scalar-relativistic treatment only partially captures (it has no true four-component Dirac description, and basis-set results fall a few percent short of the grid for the heaviest atoms). Treat results for the heaviest elements as illustrating real physical trends, not as quantitatively research-grade atomic physics.</p>
 <h3>Convergence, accuracy and run time</h3>
 <p><b>Convergence of the numerical self-consistent field.</b> Each numerical run now reports whether its density actually settled, and a configuration that did not gets a warning above the energy table (and, in Periodic Trends, has its ionisation energy withheld, for any method). This was added after tracing iron, whose numerical Hartree-Fock had been stopping at the 60-iteration cap — not because it was converging slowly but because it was trapped in a limit cycle of exactly five iterations: the density change stuck near 0.46 instead of decaying to 10<sup>−7</sup>, ε(4s) swinging between −0.34 and −0.47 Ha and ε(3d) between −0.83 and −1.11 Ha. The energy and orbital energies the app showed were whichever phase iteration 60 happened to land on, reported as an ordinary finished run; the energy, −1262.046 Ha, was about 0.20 Ha above the converged −1262.250. The cause is that the Hartree potential was damped (30% new density each iteration) while the exchange operator was rebuilt from the previous iteration's orbitals with no damping at all. Hartree-Fock now iterates exactly as before and, only if the density change stops improving (the best of the last 10 iterations not even 40% below the best of the 10 before — a converging run beats that easily and a cycle does not), switches its exchange to 70% mixing of the orbitals that feed it, sign-aligned and renormalised. Iron then converges, in 88 iterations (the damping engaging at iteration 23), to −1262.2502 Ha. The amount of damping was tested, not assumed, in a run with damping from the start: 50% turned the five-step cycle into a two-step one that never settled, 30% was worse still (density change about 0.2), and 70% converged (76 iterations). Atoms that already converge are unaffected — helium and beryllium give the same energies and iteration counts and the damping never engages — but it is not only iron that needed it. Scandium's numerical Hartree-Fock, which never reached the convergence tolerance within the old 60-iteration cap (undamped it is still at a density change of 4×10<sup>−6</sup> after 100 iterations), now converges in 63 iterations with the damping engaging at iteration 33, and its energy moves from −759.64897 to −759.64888 Ha: the old figure was a cap-limited, slightly unconverged number. The iteration cap for numerical Hartree-Fock is raised from 60 to 100. Checking the other numerical methods on iron: LDA and PBE converge to about 10<sup>−10</sup> and rSCAN in 53 iterations, but <b>numerical Hartree fails exactly as Hartree-Fock did</b> (its density change oscillating between 0.05 and 0.2). That is now flagged but <b>not fixed</b>: it has no exchange to damp, and the failure is probably the self-interaction collapse of the open d shell. Basis-set calculations run a fixed number of iterations and do not report convergence; whether they have the same problem was not checked. Numerical Hartree-Fock energies computed for other open d- and f-shell atoms before this change may have been affected; any that fail to converge are now flagged when run.</p>
-<p><b>Accuracy.</b> With the minimal basis, Hartree–Fock total energies typically sit within 0.1–0.6% of published HF-limit values for light elements, growing somewhat larger for the heavier, more electron-rich atoms in this set; larger bases converge closer to the numerical reference (though see the relativistic-effects note above for why "closer to the numerical reference" stops meaning "closer to reality" for the heaviest elements). The numerical Hartree-Fock and numerical LDA references are both typically accurate to a few hundredths of a Hartree or better against independently-optimised basis-set calculations, and stay that accurate — a few thousandths of a percent — even for the heaviest, many-shelled elements tested (checked directly up to cerium, Z=58, for atoms whose self-consistent iteration converges; see the convergence note). Plain numerical Hartree is a real exception: its gap against the basis-set method grows substantially with atomic number (a few tenths of a percent by the lanthanides), and this is worth understanding rather than dismissing as noise. It is not a grid-resolution artefact — doubling the grid's point count and the eigensolver's iteration count both left it completely unchanged — and it is not concentrated in any one bad integral either: individual orbital eigenvalues and individual Slater (direct and exchange) integrals, checked one by one, all agree closely between the two methods. What's actually happening is an accumulation of many small, legitimate per-shell-pair differences — because the grid and basis-set methods reach self-consistency via genuinely different discretisations, their converged orbitals differ very slightly in shape, and a heavy atom simply has hundreds of shell pairs for that small difference to add up across. Hartree-Fock and LDA both suppress this because they include some treatment of exchange (or exchange-correlation): switching either on for the very same heavy atom shrinks the gap by roughly two orders of magnitude. Plain Hartree has no such cancellation — it's the one method here with no self-interaction correction at all — so this isn't a bug specific to the heavy-element numerical method so much as a particularly visible symptom of Hartree's own well-known self-interaction error, the same theme §6 is built around, showing up in a new way. (For some open-shell atoms plain numerical Hartree does not converge at all; see the convergence note.) This is an educational tool, not a research-grade electronic structure code. How long a calculation takes is covered by the job-time estimates (below) rather than a rule of thumb. Roughly: grid calculations with Hartree, LDA and PBE take a few seconds per atom (rSCAN about twice that); basis-set calculations a second or two, with Hartree-Fock the exception, up to about a minute per atom for the heaviest elements; and numerical Hartree-Fock runs from seconds for light atoms to around twenty minutes for oganesson, where open d- and f-shell atoms can also need many more iterations (see the convergence note).</p>
+<p><b>Accuracy.</b> With the minimal basis, Hartree–Fock total energies typically sit within 0.1–0.6% of published HF-limit values for light elements, growing somewhat larger for the heavier, more electron-rich atoms in this set; larger bases converge closer to the numerical reference (though see the relativistic-effects note above for why "closer to the numerical reference" stops meaning "closer to reality" for the heaviest elements). The numerical Hartree-Fock and numerical LDA references are both typically accurate to a few hundredths of a Hartree or better against independently-optimised basis-set calculations, and stay that accurate — a few thousandths of a percent — even for the heaviest, many-shelled elements tested (checked directly up to cerium, Z=58, for atoms whose self-consistent iteration converges; see the convergence note). Plain numerical Hartree is a real exception: its gap against the basis-set method grows substantially with atomic number (a few tenths of a percent by the lanthanides), and this is worth understanding rather than dismissing as noise. It is not a grid-resolution artefact — doubling the grid's point count and the eigensolver's iteration count both left it completely unchanged — and it is not concentrated in any one bad integral either: individual orbital eigenvalues and individual Slater (direct and exchange) integrals, checked one by one, all agree closely between the two methods. What's actually happening is an accumulation of many small, legitimate per-shell-pair differences — because the grid and basis-set methods reach self-consistency via genuinely different discretisations, their converged orbitals differ very slightly in shape, and a heavy atom simply has hundreds of shell pairs for that small difference to add up across. Hartree-Fock and LDA both suppress this because they include some treatment of exchange (or exchange-correlation): switching either on for the very same heavy atom shrinks the gap by roughly two orders of magnitude. Plain Hartree has no such cancellation — it's the one method here with no self-interaction correction at all — so this isn't a bug specific to the heavy-element numerical method so much as a particularly visible symptom of Hartree's own well-known self-interaction error, the same theme §7 is built around, showing up in a new way. (For some open-shell atoms plain numerical Hartree does not converge at all; see the convergence note.) This is an educational tool, not a research-grade electronic structure code. How long a calculation takes is covered by the job-time estimates (below) rather than a rule of thumb. Roughly: grid calculations with Hartree, LDA and PBE take a few seconds per atom (rSCAN about twice that); basis-set calculations a second or two, with Hartree-Fock the exception, up to about a minute per atom for the heaviest elements; and numerical Hartree-Fock runs from seconds for light atoms to around twenty minutes for oganesson, where open d- and f-shell atoms can also need many more iterations (see the convergence note).</p>
 <p><b>Job-time estimates.</b> Before a run, the element page shows an estimated time next to the button (and per configuration), and Periodic Trends shows the estimated time for a full scan of the configuration being built, what remains for a partial one, and a live "about … remaining" while scanning. The estimate comes from an empirical table: every combination of method class (Hartree, Hartree-Fock, DFT with local functionals, PBE, rSCAN), basis and relativistic on/off was timed at seven anchor elements (He, Ne, Ar, Kr, Xe, Au, Og), and times in between are interpolated on a log-log scale; charge, and the choice among the local correlation functionals, change the cost too little to matter. Relativistic treatment costs almost nothing extra (×1.05 overall), PBE about 1.4–1.6× the local functionals, rSCAN 1.9–3.4×. Numerical Hartree-Fock is the exception: it is too slow to time to convergence for every element, so it is modelled as iterations × cost per iteration, both measured (35 to 54 iterations; about 0.03 s per iteration for He, rising to about 1.6 s for Og). The iteration count depends mildly on shell structure — He 35, Be 42, Ne 49, Ar 51, Sc 51, Fe 52, Kr 53, Xe 54 — and was measured from helium to xenon; beyond that the mean of the heavy-atom counts is used. The cost per iteration depends on shell structure more strongly: an atom with a partly filled shell costs two to three times as much per iteration as a closed-shell atom of similar Z (a closed-shell atom solves spin down once and reuses it for spin up), and the estimator reads that factor off the table itself, from the open-shell anchors (Sc, Fe, Au) against the closed-shell ones. The figures for the heaviest elements — gold and the heaviest atoms were timed over a few iterations only; a full scan of all 118 elements comes to about five hours and a single Og atom to about two minutes — are flagged as an order of magnitude. A different machine runs at a different speed, so the numbers are rescaled: a short benchmark at first use gives a starting factor, and every job completed afterwards (remembered in this browser) refines it, because a micro-benchmark is a poor proxy for a long run; during a scan the remaining-time figure is also corrected by how that scan is actually going. How good it is: on 21 jobs at elements the table was not fitted to, actual ÷ estimated had a median of 0.94 (10th–90th percentile 0.75–1.35) in one run, 1.05 (0.84–1.63) in a re-run after the double-zeta timings were re-measured, and 1.19 (1.06–1.77) in a third after the Hartree-Fock iteration counts and cap changed; 21, 21 and 19 of the 21 jobs fell within a factor of 2. A fourth run, after the numerical Hartree-Fock solver had been made about ten times faster and its table re-measured (30 held-out jobs, now including KLI and OEP), gave a median of 1.07 (10th–90th percentile 0.84–1.84) with 28 of 30 within a factor of 2; the two outside were basis-set Hartree-Fock jobs, titanium in an even-tempered basis (3.5×) and uranium in the relativistic minimal+ basis (2.2×), which that change did not touch. The runs differ because the machine's own speed fluctuates, and the benchmark used to scale to it with it — so the estimates are best read as good to within about a factor of 1.5 for most jobs and a factor of 2 for nearly all, and ranges are shown rather than single numbers. An earlier set of 22 jobs had every one running 1.04–2.2× longer than the raw table predicted (median 1.38), which is why the table carries a 1.3 realism factor (the raw table was measured in long runs of identical jobs, where the JIT and memory are at their best); that set was used to tune it and is therefore not counted in the accuracy above. Timing on a shared machine is itself noisy — the same short job varied by up to 1.5× between runs — so estimates of a few seconds are not meaningful at the 20% level; the long jobs, which are the ones that matter, are the stable ones.</p>
 <h3>Corrections to earlier versions</h3>
 <p><b>Numerical-grid accuracy (fixed: total energies were off by up to tens of millihartree, growing with Z).</b> Energies on the logarithmic grid sat above literature by an amount that grew steeply with atomic number (neon 2.9 mH, magnesium 5.1, argon 18.6 hartree-thousandths) and was the same for closed and open shells. The cause was <i>not</i> the second-order stencil, which is what I first assumed and then tested: halving the step changed nothing, while moving the inner boundary inward removed almost all of it. The solver forced g = r<sup>1/2</sup>R to zero at r = 10<sup>−6</sup> bohr, but the 1s function does not vanish there, and that artificial wall shifted its energy by about 1.9×10<sup>−6</sup>Z<sup>3</sup> hartree (10 mH at Z = 18, 32 mH at Z = 26); an 18-electron atom has two 1s electrons, which accounts for argon's offset. Three changes fix it, each checked on its own against exactly solvable one-electron ions (E = −Z²/2): the inner boundary now uses the physical behaviour g ∝ r<sup>l+1/2</sup> (a 28–42× gain by itself); the eigenproblem is refined with Numerov's fourth-order scheme (relative error of the bare 1s eigenvalue about 10<sup>−9</sup>, with five-point operators for the kinetic matrix elements and kinetic energy); and cumulative integrals, which carried a constant relative error of 2.3×10<sup>−6</sup> in every Hartree and exchange potential, now use the Euler–Maclaurin end corrections (10<sup>−13</sup>). Closed-shell Hartree-Fock on the grid now agrees with literature to 0.06 mH or better from helium to argon (argon 0.007 mH, from 18.6), and for B–F the grid and the even-tempered basis, two unrelated discretisations, agree to 0.04 mH. The same defect, in a different guise, was in the weak-form operator that the ZORA and rSCAN grid solvers use (its natural inner condition is zero slope): on a constant-mass hydrogenic 1s it was 12 mH at Z = 18, 36 at Z = 26 and 318 at Z = 54; rSCAN against the converged basis went from 4.0 to 0.12 mH for neon and from 24.3 to 0.36 mH for argon. The fix matters for non-relativistic rSCAN (its kinetic mass stays near one half at the nucleus: the energy moved by 3.9, 23.9 and 201 mH for neon, argon and krypton) but hardly at all for the relativistic (ZORA) solver, whose mass 1/(2 − α²V) goes to zero at the nucleus and so decouples the inner boundary (0.01, 0.04 and 0.30 mH for the same atoms, measured). That operator remains second-order in the stencil, so a few tenths of a millihartree of error remain for argon and grow with Z; relativistic and rSCAN grid energies are therefore still less accurate than the non-relativistic ones, though no longer carrying the boundary defect. As a result the even-tempered basis is no longer the more accurate route for total energies of light atoms, but it is still far from converged for the d-block (scandium and iron sit 4.6 and 6.6 mH above the grid at N = 10). Stored Periodic Trends results were discarded.</p>
